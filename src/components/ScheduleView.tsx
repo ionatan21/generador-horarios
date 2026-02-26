@@ -66,34 +66,127 @@ export default function ScheduleView({
     null,
   );
 
+  /**
+   * Builds an off-screen capture wrapper with padding that contains a clone of
+   * the grid. The wrapper uses `position: fixed; left: -9999px; top: 0` so
+   * html2canvas anchors it at Y=0 in viewport coordinates — avoiding the
+   * bottom-clip that happens when elements are placed at large negative Y
+   * values (absolute -99999px puts the element outside h2c's render window).
+   *
+   * The grid clone has its full scrollHeight locked in as an explicit height so
+   * html2canvas never underestimates the element size.
+   *
+   * Returns { wrapper, cleanup }.
+   */
+  function buildCaptureClone(): { wrapper: HTMLElement; cleanup: () => void } {
+    const grid = gridRef.current!;
+    const cs = window.getComputedStyle(grid);
+    const PADDING = 24;
+
+    // Padded wrapper — this is what html2canvas will capture
+    const wrapper = document.createElement("div");
+    wrapper.style.cssText = [
+      "position: fixed",
+      "top: 0",
+      "left: -9999px",
+      `padding: ${PADDING}px`,
+      `background: ${darkMode ? "#0f172a" : "#f8fafc"}`,
+      "box-sizing: border-box",
+      "width: auto",
+      "height: auto",
+    ].join("; ");
+
+    // Clone the grid
+    const clone = grid.cloneNode(true) as HTMLElement;
+    const fullWidth = grid.scrollWidth;
+    const fullHeight = grid.scrollHeight;
+
+    clone.style.cssText = "";          // wipe inline styles from original
+    clone.style.display = "grid";
+    clone.style.gridTemplateColumns = cs.gridTemplateColumns;
+    clone.style.gridTemplateRows = cs.gridTemplateRows;
+    clone.style.width = `${fullWidth}px`;
+    clone.style.height = `${fullHeight}px`;  // explicit — prevents h2c from clipping
+    clone.style.position = "relative";
+    clone.style.overflow = "visible";
+
+    // Freeze entry animations
+    clone.querySelectorAll<HTMLElement>(".sv-course-block").forEach((el) => {
+      el.style.animation = "none";
+      el.style.transform = "scaleY(1)";
+      el.style.opacity = "1";
+    });
+
+    // Sticky → relative so headers are laid out in normal flow
+    clone
+      .querySelectorAll<HTMLElement>(".sv-corner, .sv-day-header, .sv-time-label")
+      .forEach((el) => { el.style.position = "relative"; });
+
+    // Hide tooltips
+    clone.querySelectorAll<HTMLElement>(".sv-tooltip").forEach((el) => {
+      el.style.display = "none";
+    });
+
+    wrapper.appendChild(clone);
+    document.body.appendChild(wrapper);
+
+    return {
+      wrapper,
+      cleanup: () => { if (wrapper.parentNode) wrapper.parentNode.removeChild(wrapper); },
+    };
+  }
+
   async function exportImage() {
     if (!gridRef.current) return;
-    const canvas = await html2canvas(gridRef.current, {
-      scale: 2,
-      useCORS: true,
-    });
-    const link = document.createElement("a");
-    link.download = "horario.png";
-    link.href = canvas.toDataURL("image/png");
-    link.click();
+    const { wrapper, cleanup } = buildCaptureClone();
+    try {
+      const canvas = await html2canvas(wrapper, {
+        scale: 2,
+        useCORS: true,
+        allowTaint: true,
+        logging: false,
+        scrollX: 0,
+        scrollY: 0,
+        windowWidth: wrapper.scrollWidth,
+        windowHeight: wrapper.scrollHeight,
+      });
+      const link = document.createElement("a");
+      link.download = "horario.png";
+      link.href = canvas.toDataURL("image/png");
+      link.click();
+    } finally {
+      cleanup();
+    }
   }
 
   async function exportPDF() {
     if (!gridRef.current) return;
-    const canvas = await html2canvas(gridRef.current, {
-      scale: 2,
-      useCORS: true,
-    });
-    const imgData = canvas.toDataURL("image/png");
-    const w = canvas.width / 2;
-    const h = canvas.height / 2;
-    const pdf = new jsPDF({
-      orientation: "landscape",
-      unit: "px",
-      format: [w, h],
-    });
-    pdf.addImage(imgData, "PNG", 0, 0, w, h);
-    pdf.save("horario.pdf");
+    const { wrapper, cleanup } = buildCaptureClone();
+    try {
+      const canvas = await html2canvas(wrapper, {
+        scale: 2,
+        useCORS: true,
+        allowTaint: true,
+        logging: false,
+        scrollX: 0,
+        scrollY: 0,
+        windowWidth: wrapper.scrollWidth,
+        windowHeight: wrapper.scrollHeight,
+      });
+      const imgData = canvas.toDataURL("image/png");
+      // Use raw canvas pixel dimensions + px_scaling hotfix to prevent jsPDF's
+      // internal 72/96 DPI downscale from trimming the last rows of the page.
+      const pdf = new jsPDF({
+        orientation: canvas.width > canvas.height ? "landscape" : "portrait",
+        unit: "px",
+        format: [canvas.width, canvas.height],
+        hotfixes: ["px_scaling"],
+      });
+      pdf.addImage(imgData, "PNG", 0, 0, canvas.width, canvas.height);
+      pdf.save("horario.pdf");
+    } finally {
+      cleanup();
+    }
   }
 
   function exportExcel() {
@@ -102,11 +195,16 @@ export default function ScheduleView({
       ...DAYS.map((d) => t(`days.${d}`)),
     ];
     const rows = SLOTS.map((slot) => {
+      const slotHour = parseInt(slot.start.split(":")[0], 10);
       const row: string[] = [slot.start];
       for (const day of DAYS) {
         const course = schedule
           .getCoursesForDay(day)
-          .find((c) => c.timeRange.start === slot.start);
+          .find((c) => {
+            const startHour = parseInt(c.timeRange.start.split(":")[0], 10);
+            const endHour = parseInt(c.timeRange.end.split(":")[0], 10);
+            return slotHour >= startHour && slotHour <= endHour;
+          });
         row.push(course ? course.name : "");
       }
       return row;
