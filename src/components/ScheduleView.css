@@ -1,0 +1,189 @@
+/* ── Outer shell ─────────────────────────────────────────────── */
+.schedule-view {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+}
+
+.sv-scroll {
+  flex: 1;
+  overflow: auto;
+  border-radius: 0.75rem;
+  border: 1px solid #e2e8f0;
+  background: #fff;
+  scrollbar-width: thin;
+  scrollbar-color: #cbd5e1 transparent;
+}
+
+/* ── Grid layout ─────────────────────────────────────────────── */
+/* col 0 = time labels │ cols 1-7 = days                        */
+/* row 0 = header      │ rows 1-16 = 50-min slots               */
+.sv-grid {
+  display: grid;
+  grid-template-columns: 64px repeat(7, minmax(80px, 1fr));
+  grid-template-rows: 44px repeat(16, 56px);
+  min-width: 600px;
+}
+
+/* ── Generic cell ────────────────────────────────────────────── */
+.sv-cell {
+  position: relative;
+  border-bottom: 1px solid #f1f5f9;
+  border-right: 1px solid #f1f5f9;
+}
+
+/* ── Top-left corner ─────────────────────────────────────────── */
+.sv-corner {
+  position: sticky;
+  top: 0;
+  left: 0;
+  z-index: 3;
+  background: #f8fafc;
+  border-bottom: 2px solid #e2e8f0;
+  border-right: 2px solid #e2e8f0;
+}
+
+/* ── Day-header row ──────────────────────────────────────────── */
+.sv-day-header {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  background: #f8fafc;
+  border-bottom: 2px solid #e2e8f0;
+}
+
+.sv-day-abbr {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #1e40af;
+  line-height: 1;
+}
+
+.sv-day-full {
+  font-size: 0.65rem;
+  color: #94a3b8;
+  line-height: 1;
+}
+
+/* ── Time-label column ───────────────────────────────────────── */
+.sv-time-label {
+  position: sticky;
+  left: 0;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f8fafc;
+  border-right: 2px solid #e2e8f0;
+  font-size: 0.68rem;
+  font-weight: 600;
+  color: #64748b;
+  letter-spacing: 0.02em;
+}
+
+/* ── Data slot cells ─────────────────────────────────────────── */
+.sv-slot {
+  padding: 3px;
+  transition: background 0.1s;
+}
+
+.sv-slot:hover {
+  background: #f1f5f9;
+}
+
+/* ── Course block ────────────────────────────────────────────── */
+.sv-course-block {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: 6px;
+  border: 1px solid transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: visible;
+  cursor: default;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12);
+  transition: transform 0.15s, box-shadow 0.15s;
+  animation: sv-block-in 0.25s ease both;
+}
+
+.sv-course-block:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.22);
+  z-index: 10;
+}
+
+.sv-course-name {
+  font-size: 0.67rem;
+  font-weight: 700;
+  text-align: center;
+  padding: 0 4px;
+  line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+  pointer-events: none;
+}
+
+/* ── Hover tooltip ───────────────────────────────────────────── */
+.sv-tooltip {
+  display: none;
+  position: absolute;
+  bottom: calc(100% + 7px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: #1e293b;
+  color: #f1f5f9;
+  border-radius: 7px;
+  padding: 7px 11px;
+  font-size: 0.72rem;
+  white-space: nowrap;
+  flex-direction: column;
+  gap: 3px;
+  z-index: 20;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.28);
+  pointer-events: none;
+}
+
+.sv-tooltip::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 5px solid transparent;
+  border-top-color: #1e293b;
+}
+
+.sv-course-block:hover .sv-tooltip {
+  display: flex;
+}
+
+.sv-tooltip strong {
+  font-size: 0.78rem;
+}
+
+.sv-tooltip-days {
+  color: #94a3b8;
+  letter-spacing: 0.08em;
+}
+
+/* ── Block entrance animation ────────────────────────────────── */
+@keyframes sv-block-in {
+  from {
+    opacity: 0;
+    transform: scaleY(0.45);
+  }
+  to {
+    opacity: 1;
+    transform: scaleY(1);
+  }
+}
