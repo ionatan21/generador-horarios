@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Course, CourseColor, TimeRange, Schedule } from '../domain'
 import type { Day } from '../domain'
 import './CourseForm.css'
@@ -31,6 +32,7 @@ interface Props {
 }
 
 export default function CourseForm({ schedule, onAdd }: Props) {
+  const { t } = useTranslation()
   const [form, setForm] = useState(EMPTY_FORM)
   const [touched, setTouched] = useState(false)
 
@@ -38,9 +40,9 @@ export default function CourseForm({ schedule, onAdd }: Props) {
   const timeError = useMemo(() => {
     if (!form.startTime || !form.endTime) return null
     return form.endTime <= form.startTime
-      ? 'La hora de finalización debe ser mayor que la de inicio.'
+      ? t('courseForm.timeError')
       : null
-  }, [form.startTime, form.endTime])
+  }, [form.startTime, form.endTime, t])
 
   const availableEndHours = useMemo(() => {
     if (!form.startTime) return END_HOURS
@@ -54,11 +56,11 @@ export default function CourseForm({ schedule, onAdd }: Props) {
       const range = new TimeRange(form.startTime, form.endTime)
       const candidate = new Course(form.name || '…', form.days, range, new CourseColor(form.color))
       const check = schedule.checkConflict(candidate)
-      return check.hasConflict ? `Conflicto con “${check.existing.name}” el día ${check.day}` : null
+      return check.hasConflict ? t('courseForm.conflict', { name: check.existing.name, day: check.day }) : null
     } catch {
       return null
     }
-  }, [schedule, form.startTime, form.endTime, form.days, form.color, form.name, timeError])
+  }, [schedule, form.startTime, form.endTime, form.days, form.color, form.name, timeError, t])
 
   const isValid =
     form.name.trim() !== '' &&
@@ -98,29 +100,29 @@ export default function CourseForm({ schedule, onAdd }: Props) {
   /* ── render ──────────────────────────────────────────── */
   return (
     <form className="course-form" onSubmit={handleSubmit} noValidate>
-      <h2 className="cf-title">Crear curso</h2>
+      <h2 className="cf-title">{t('courseForm.title')}</h2>
 
       {/* Course name */}
       <div className="cf-field">
         <label htmlFor="course-name" className="cf-label">
-          Nombre del curso
+          {t('courseForm.nameLabel')}
         </label>
         <input
           id="course-name"
           type="text"
           className={`cf-input ${touched && !form.name.trim() ? 'cf-input--error' : ''}`}
-          placeholder="Ej. Cálculo I"
+          placeholder={t('courseForm.namePlaceholder')}
           value={form.name}
           onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
         />
         {touched && !form.name.trim() && (
-          <span className="cf-error-msg">Este campo es obligatorio.</span>
+          <span className="cf-error-msg">{t('courseForm.nameRequired')}</span>
         )}
       </div>
 
       {/* Days */}
       <div className="cf-field">
-        <span className="cf-label">Días</span>
+        <span className="cf-label">{t('courseForm.daysLabel')}</span>
         <div className="cf-days">
           {DAYS.map((day) => (
             <button
@@ -130,19 +132,19 @@ export default function CourseForm({ schedule, onAdd }: Props) {
               style={form.days.includes(day) ? { backgroundColor: form.color, borderColor: form.color } : undefined}
               onClick={() => toggleDay(day)}
             >
-              {day}
+              {t(`dayAbbr.${day}`)}
             </button>
           ))}
         </div>
         {touched && form.days.length === 0 && (
-          <span className="cf-error-msg">Selecciona al menos un día.</span>
+          <span className="cf-error-msg">{t('courseForm.daysRequired')}</span>
         )}
       </div>
 
       {/* Time range */}
       <div className="cf-time-row">
         <div className="cf-field">
-          <label htmlFor="start-time" className="cf-label">Desde</label>
+          <label htmlFor="start-time" className="cf-label">{t('courseForm.fromLabel')}</label>
           <select
             id="start-time"
             className={`cf-input cf-select ${touched && !form.startTime ? 'cf-input--error' : ''}`}
@@ -160,13 +162,13 @@ export default function CourseForm({ schedule, onAdd }: Props) {
             }}
           >
             <option value="">--</option>
-            {START_HOURS.map((t) => (
-              <option key={t} value={t}>{t}</option>
+            {START_HOURS.map((time) => (
+              <option key={time} value={time}>{time}</option>
             ))}
           </select>
         </div>
         <div className="cf-field">
-          <label htmlFor="end-time" className="cf-label">Hasta</label>
+          <label htmlFor="end-time" className="cf-label">{t('courseForm.toLabel')}</label>
           <select
             id="end-time"
             className={`cf-input cf-select ${timeError ? 'cf-input--error' : ''}`}
@@ -174,8 +176,8 @@ export default function CourseForm({ schedule, onAdd }: Props) {
             onChange={(e) => setForm((f) => ({ ...f, endTime: e.target.value }))}
           >
             <option value="">--</option>
-            {availableEndHours.map((t) => (
-              <option key={t} value={t}>{t}</option>
+            {availableEndHours.map((time) => (
+              <option key={time} value={time}>{time}</option>
             ))}
           </select>
         </div>
@@ -184,7 +186,7 @@ export default function CourseForm({ schedule, onAdd }: Props) {
 
       {/* Color picker */}
       <div className="cf-field">
-        <span className="cf-label">Color</span>
+        <span className="cf-label">{t('courseForm.colorLabel')}</span>
         <div className="cf-colors">
           {PRESET_COLORS.map((hex) => (
             <button
@@ -196,7 +198,7 @@ export default function CourseForm({ schedule, onAdd }: Props) {
               onClick={() => setForm((f) => ({ ...f, color: hex }))}
             />
           ))}
-          <label className="cf-color-custom" title="Color personalizado">
+          <label className="cf-color-custom" title={t('courseForm.colorCustomTitle')}>
             <input
               type="color"
               value={form.color}
@@ -217,7 +219,7 @@ export default function CourseForm({ schedule, onAdd }: Props) {
       {/* Actions */}
       <div className="cf-actions">
         <button type="submit" className="cf-btn cf-btn--primary">
-          Agregar curso
+          {t('courseForm.addBtn')}
         </button>
       </div>
     </form>

@@ -1,0 +1,57 @@
+{
+  "courseForm": {
+    "title": "Create course",
+    "nameLabel": "Course name",
+    "namePlaceholder": "E.g. Calculus I",
+    "nameRequired": "This field is required.",
+    "daysLabel": "Days",
+    "daysRequired": "Select at least one day.",
+    "fromLabel": "From",
+    "toLabel": "To",
+    "colorLabel": "Color",
+    "colorCustomTitle": "Custom color",
+    "addBtn": "Add course",
+    "timeError": "End time must be after start time.",
+    "conflict": "Conflict with \"{{name}}\" on {{day}}"
+  },
+  "scheduleView": {
+    "title": "Weekly Schedule",
+    "exportImage": "Export Image",
+    "exportImageTitle": "Export as image",
+    "exportPdf": "PDF",
+    "exportPdfTitle": "Export as PDF",
+    "exportExcel": "Excel",
+    "exportExcelTitle": "Export as Excel",
+    "darkModeTitle": "Dark mode",
+    "lightLabel": "Light",
+    "darkLabel": "Dark",
+    "clearTitle": "Clear schedule",
+    "clearLabel": "Clear",
+    "timeCol": "Time",
+    "modalMessage": "Remove <1>{{course}}</1> from <3>{{day}}</3>?",
+    "cancel": "Cancel",
+    "delete": "Remove"
+  },
+  "days": {
+    "L": "Monday",
+    "K": "Tuesday",
+    "M": "Wednesday",
+    "J": "Thursday",
+    "V": "Friday",
+    "S": "Saturday",
+    "D": "Sunday"
+  },
+  "dayAbbr": {
+    "L": "M",
+    "K": "Tu",
+    "M": "W",
+    "J": "Th",
+    "V": "F",
+    "S": "Sa",
+    "D": "Su"
+  },
+  "lang": {
+    "es": "Español",
+    "en": "English"
+  }
+}

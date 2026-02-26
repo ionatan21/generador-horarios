@@ -1,0 +1,57 @@
+{
+  "courseForm": {
+    "title": "Crear curso",
+    "nameLabel": "Nombre del curso",
+    "namePlaceholder": "Ej. Cálculo I",
+    "nameRequired": "Este campo es obligatorio.",
+    "daysLabel": "Días",
+    "daysRequired": "Selecciona al menos un día.",
+    "fromLabel": "Desde",
+    "toLabel": "Hasta",
+    "colorLabel": "Color",
+    "colorCustomTitle": "Color personalizado",
+    "addBtn": "Agregar curso",
+    "timeError": "La hora de finalización debe ser mayor que la de inicio.",
+    "conflict": "Conflicto con \"{{name}}\" el día {{day}}"
+  },
+  "scheduleView": {
+    "title": "Horario semanal",
+    "exportImage": "Exportar Imagen",
+    "exportImageTitle": "Exportar como imagen",
+    "exportPdf": "PDF",
+    "exportPdfTitle": "Exportar como PDF",
+    "exportExcel": "Excel",
+    "exportExcelTitle": "Exportar como Excel",
+    "darkModeTitle": "Modo oscuro",
+    "lightLabel": "Claro",
+    "darkLabel": "Oscuro",
+    "clearTitle": "Limpiar horario",
+    "clearLabel": "Limpiar",
+    "timeCol": "Hora",
+    "modalMessage": "¿Eliminar <1>{{course}}</1> del <3>{{day}}</3>?",
+    "cancel": "Cancelar",
+    "delete": "Eliminar"
+  },
+  "days": {
+    "L": "Lunes",
+    "K": "Martes",
+    "M": "Miércoles",
+    "J": "Jueves",
+    "V": "Viernes",
+    "S": "Sábado",
+    "D": "Domingo"
+  },
+  "dayAbbr": {
+    "L": "L",
+    "K": "Ma",
+    "M": "Mi",
+    "J": "J",
+    "V": "V",
+    "S": "S",
+    "D": "D"
+  },
+  "lang": {
+    "es": "Español",
+    "en": "English"
+  }
+}
