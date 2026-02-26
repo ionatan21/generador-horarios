@@ -1,5 +1,6 @@
 import { useState, useMemo } from 'react'
-import type { Course, Day } from '../types'
+import { Course, CourseColor, TimeRange, Schedule } from '../domain'
+import type { Day } from '../domain'
 import './CourseForm.css'
 
 const DAYS: Day[] = ['L', 'K', 'M', 'J', 'V', 'S', 'D']
@@ -14,16 +15,7 @@ const END_HOURS = Array.from({ length: 16 }, (_, i) => {
   return `${String(h).padStart(2, '0')}:50`
 })
 
-const PRESET_COLORS = [
-  '#3b82f6', // blue
-  '#10b981', // green
-  '#f59e0b', // amber
-  '#ef4444', // red
-  '#8b5cf6', // violet
-  '#ec4899', // pink
-  '#14b8a6', // teal
-  '#f97316', // orange
-]
+const PRESET_COLORS = CourseColor.PRESETS
 
 const EMPTY_FORM = {
   name: '',
@@ -34,11 +26,11 @@ const EMPTY_FORM = {
 }
 
 interface Props {
-  courses: Course[]
+  schedule: Schedule
   onAdd: (course: Course) => void
 }
 
-export default function CourseForm({ courses, onAdd }: Props) {
+export default function CourseForm({ schedule, onAdd }: Props) {
   const [form, setForm] = useState(EMPTY_FORM)
   const [touched, setTouched] = useState(false)
 
@@ -58,20 +50,23 @@ export default function CourseForm({ courses, onAdd }: Props) {
 
   const conflictWarning = useMemo(() => {
     if (!form.startTime || !form.endTime || timeError || form.days.length === 0) return null
-    const conflict = courses.find((c) =>
-      c.days.some((d) => form.days.includes(d)) &&
-      form.startTime < c.endTime &&
-      form.endTime > c.startTime
-    )
-    return conflict ? `Conflicto con "${conflict.name}"` : null
-  }, [courses, form.startTime, form.endTime, form.days, timeError])
+    try {
+      const range = new TimeRange(form.startTime, form.endTime)
+      const candidate = new Course(form.name || '…', form.days, range, new CourseColor(form.color))
+      const check = schedule.checkConflict(candidate)
+      return check.hasConflict ? `Conflicto con “${check.existing.name}” el día ${check.day}` : null
+    } catch {
+      return null
+    }
+  }, [schedule, form.startTime, form.endTime, form.days, form.color, form.name, timeError])
 
   const isValid =
     form.name.trim() !== '' &&
     form.days.length > 0 &&
     form.startTime !== '' &&
     form.endTime !== '' &&
-    !timeError
+    !timeError &&
+    !conflictWarning
 
   /* ── handlers ────────────────────────────────────────── */
   function toggleDay(day: Day) {
@@ -85,16 +80,19 @@ export default function CourseForm({ courses, onAdd }: Props) {
     e.preventDefault()
     setTouched(true)
     if (!isValid) return
-    onAdd({
-      id: crypto.randomUUID(),
-      name: form.name.trim(),
-      days: form.days,
-      startTime: form.startTime,
-      endTime: form.endTime,
-      color: form.color,
-    })
-    setForm(EMPTY_FORM)
-    setTouched(false)
+    try {
+      const course = new Course(
+        form.name.trim(),
+        form.days,
+        new TimeRange(form.startTime, form.endTime),
+        new CourseColor(form.color),
+      )
+      onAdd(course)
+      setForm(EMPTY_FORM)
+      setTouched(false)
+    } catch (err) {
+      console.error('Error creating course:', err)
+    }
   }
 
   /* ── render ──────────────────────────────────────────── */

@@ -1,3 +1,93 @@
+/* ── Toolbar ────────────────────────────────────────────────── */
+.sv-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.6rem 1rem;
+  background: #fff;
+  border-bottom: 1px solid #e2e8f0;
+  flex-shrink: 0;
+}
+
+.sv-toolbar__title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #1e293b;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+  margin: 0;
+}
+
+.sv-toolbar__actions {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+}
+
+.sv-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.38rem 0.75rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.45rem;
+  background: #f8fafc;
+  color: #334155;
+  font-size: 0.8rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+  white-space: nowrap;
+}
+
+.sv-btn:hover {
+  background: #eff6ff;
+  border-color: #93c5fd;
+  color: #1e40af;
+}
+
+.sv-btn__icon {
+  width: 1rem;
+  height: 1rem;
+  display: block;
+  flex-shrink: 0;
+}
+
+.sv-btn__label {
+  line-height: 1;
+}
+
+.sv-btn--active {
+  background: #1e40af;
+  border-color: #1e40af;
+  color: #fff;
+}
+
+.sv-btn--active .sv-btn__icon {
+  filter: brightness(0) invert(1);
+}
+
+.sv-btn--active:hover {
+  background: #1e3a8a;
+  border-color: #1e3a8a;
+  color: #fff;
+}
+
+.sv-btn--danger:hover {
+  background: #fef2f2;
+  border-color: #fca5a5;
+  color: #dc2626;
+}
+
+.sv-toolbar__sep {
+  width: 1px;
+  height: 1.25rem;
+  background: #e2e8f0;
+  flex-shrink: 0;
+}
+
 /* ── Outer shell ─────────────────────────────────────────────── */
 .schedule-view {
   display: flex;
@@ -26,11 +116,12 @@
   min-width: 600px;
 }
 
-/* ── Generic cell ────────────────────────────────────────────── */
-.sv-cell {
-  position: relative;
-  border-bottom: 1px solid #f1f5f9;
-  border-right: 1px solid #f1f5f9;
+/* ── Generic cell (header / corner / time label base) ───────── */
+.sv-corner,
+.sv-day-header,
+.sv-time-label {
+  border-bottom: 1px solid #e2e8f0;
+  border-right: 1px solid #e2e8f0;
 }
 
 /* ── Top-left corner ─────────────────────────────────────────── */
@@ -38,7 +129,7 @@
   position: sticky;
   top: 0;
   left: 0;
-  z-index: 3;
+  z-index: 5;
   background: #f8fafc;
   border-bottom: 2px solid #e2e8f0;
   border-right: 2px solid #e2e8f0;
@@ -48,7 +139,7 @@
 .sv-day-header {
   position: sticky;
   top: 0;
-  z-index: 2;
+  z-index: 10;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -87,31 +178,32 @@
   letter-spacing: 0.02em;
 }
 
-/* ── Data slot cells ─────────────────────────────────────────── */
-.sv-slot {
-  padding: 3px;
+/* ── Background slot cells (grid lines only, no stacking context) */
+.sv-bg-cell {
+  border-bottom: 1px solid #f1f5f9;
+  border-right: 1px solid #f1f5f9;
+}
+
+.sv-bg-cell:hover {
+  background: #f8faff;
   transition: background 0.1s;
 }
 
-.sv-slot:hover {
-  background: #f1f5f9;
-}
-
-/* ── Course block ────────────────────────────────────────────── */
+/* ── Course block — direct grid child, spans N rows ─────── */
 .sv-course-block {
   position: relative;
-  width: 100%;
-  height: 100%;
+  margin: 3px;
   border-radius: 6px;
   border: 1px solid transparent;
   display: flex;
   align-items: center;
   justify-content: center;
-  overflow: visible;
   cursor: default;
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12);
   transition: transform 0.15s, box-shadow 0.15s;
   animation: sv-block-in 0.25s ease both;
+  z-index: 2;
+  overflow: visible;
 }
 
 .sv-course-block:hover {
