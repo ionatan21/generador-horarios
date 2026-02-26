@@ -5,11 +5,15 @@ import * as XLSX from 'xlsx'
 import { DAYS, DAY_NAMES, TimeSlot } from '../domain'
 import type { Schedule, Day, Course } from '../domain'
 import iconImage from '../assets/icon-image.svg'
+import iconImageWhite from '../assets/icon-image-white.svg'
 import iconPdf from '../assets/icon-pdf.svg'
+import iconPdfWhite from '../assets/icon-pdf-white.svg'
 import iconExcel from '../assets/icon-excel.svg'
+import iconExcelWhite from '../assets/icon-excel-white.svg'
 import iconMoon from '../assets/icon-moon.svg'
 import iconSun from '../assets/icon-sun.svg'
 import iconTrash from '../assets/icon-trash.svg'
+import iconTrashWhite from '../assets/icon-trash-white.svg'
 import './ScheduleView.css'
 
 const SLOTS = TimeSlot.ALL
@@ -85,24 +89,23 @@ export default function ScheduleView({ schedule, darkMode, onToggleDark, onClear
         <h2 className="sv-toolbar__title">Horario semanal</h2>
         <div className="sv-toolbar__actions">
           <button className="sv-btn" onClick={exportImage} title="Exportar como imagen">
-            <img className="sv-btn__icon" src={iconImage} alt="" />
+            <img className="sv-btn__icon" src={darkMode ? iconImageWhite : iconImage} alt="" />
             <span className="sv-btn__label">Exportar Imagen</span>
           </button>
           <button className="sv-btn" onClick={exportPDF} title="Exportar como PDF">
-            <img className="sv-btn__icon" src={iconPdf} alt="" />
+            <img className="sv-btn__icon" src={darkMode ? iconPdfWhite : iconPdf} alt="" />
             <span className="sv-btn__label">PDF</span>
           </button>
           <button className="sv-btn" onClick={exportExcel} title="Exportar como Excel">
-            <img className="sv-btn__icon" src={iconExcel} alt="" />
+            <img className="sv-btn__icon" src={darkMode ? iconExcelWhite : iconExcel} alt="" />
             <span className="sv-btn__label">Excel</span>
           </button>
           <div className="sv-toolbar__sep" />
           <button className={`sv-btn${darkMode ? ' sv-btn--active' : ''}`} onClick={onToggleDark} title="Modo oscuro">
             <img className="sv-btn__icon" src={darkMode ? iconSun : iconMoon} alt="" />
-            <span className="sv-btn__label">{darkMode ? 'Claro' : 'Oscuro'}</span>
           </button>
           <button className="sv-btn sv-btn--danger" onClick={onClear} title="Limpiar horario">
-            <img className="sv-btn__icon" src={iconTrash} alt="" />
+            <img className="sv-btn__icon" src={darkMode ? iconTrashWhite : iconTrash} alt="" />
             <span className="sv-btn__label">Limpiar</span>
           </button>
         </div>
