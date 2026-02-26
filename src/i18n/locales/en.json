@@ -27,6 +27,8 @@
     "darkLabel": "Dark",
     "clearTitle": "Clear schedule",
     "clearLabel": "Clear",
+    "clearConfirmMessage": "Delete all courses from the schedule?",
+    "clearConfirmBtn": "Clear all",
     "timeCol": "Time",
     "modalMessage": "Remove <1>{{course}}</1> from <3>{{day}}</3>?",
     "cancel": "Cancel",

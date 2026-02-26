@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useRef, useState, Fragment } from "react";
 import { useTranslation, Trans } from "react-i18next";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
@@ -55,6 +55,7 @@ export default function ScheduleView({
 }: Props) {
   const { t, i18n } = useTranslation();
   const gridRef = useRef<HTMLDivElement>(null);
+  const [pendingClear, setPendingClear] = useState(false);
 
   function toggleLang() {
     const next = i18n.language === "es" ? "en" : "es";
@@ -122,7 +123,7 @@ export default function ScheduleView({
         <h2 className="sv-toolbar__title">{t("scheduleView.title")}</h2>
         <div className="sv-toolbar__actions">
           <button
-            className="sv-btn"
+            className="sv-btn sv-btn--w-lg"
             onClick={exportImage}
             title={t("scheduleView.exportImageTitle")}
           >
@@ -136,7 +137,7 @@ export default function ScheduleView({
             </span>
           </button>
           <button
-            className="sv-btn"
+            className="sv-btn sv-btn--w-md"
             onClick={exportPDF}
             title={t("scheduleView.exportPdfTitle")}
           >
@@ -148,7 +149,7 @@ export default function ScheduleView({
             <span className="sv-btn__label">{t("scheduleView.exportPdf")}</span>
           </button>
           <button
-            className="sv-btn"
+            className="sv-btn sv-btn--w-md"
             onClick={exportExcel}
             title={t("scheduleView.exportExcelTitle")}
           >
@@ -175,8 +176,8 @@ export default function ScheduleView({
             />
           </button>
           <button
-            className="sv-btn sv-btn--danger"
-            onClick={onClear}
+            className="sv-btn sv-btn--danger sv-btn--w-md"
+            onClick={() => setPendingClear(true)}
             title={t("scheduleView.clearTitle")}
           >
             <img
@@ -184,12 +185,9 @@ export default function ScheduleView({
               src={darkMode ? iconTrashWhite : iconTrash}
               alt=""
             />
-            <span className="sv-btn__label">
-              {t("scheduleView.clearLabel")}
-            </span>
           </button>
           <button
-            className="sv-btn"
+            className="sv-btn sv-btn--w-sm"
             onClick={toggleLang}
             title={t("lang." + (i18n.language === "es" ? "en" : "es"))}
           >
@@ -219,7 +217,7 @@ export default function ScheduleView({
           {SLOTS.map((slot, si) => {
             const gridRow = si + SLOT_ROW_OFFSET;
             return (
-              <>
+              <Fragment key={si}>
                 <div
                   key={`t-${si}`}
                   className="sv-time-label"
@@ -234,7 +232,7 @@ export default function ScheduleView({
                     style={{ gridColumn: di + DAY_COL_OFFSET, gridRow }}
                   />
                 ))}
-              </>
+              </Fragment>
             );
           })}
           {DAYS.map((day, di) =>
@@ -247,10 +245,11 @@ export default function ScheduleView({
               const rowStart = startHour - FIRST_HOUR + SLOT_ROW_OFFSET;
               const rowSpan = endHour - startHour + 1;
               const fg = contrastColor(course.color.hex);
+              const tipBelow = rowStart - SLOT_ROW_OFFSET < SLOTS.length / 2;
               return (
                 <div
                   key={`${course.id}-${day}`}
-                  className="sv-course-block"
+                  className={`sv-course-block${tipBelow ? " sv-course-block--tip-below" : ""}`}
                   style={{
                     gridColumn: di + DAY_COL_OFFSET,
                     gridRow: `${rowStart} / span ${rowSpan}`,
@@ -271,7 +270,7 @@ export default function ScheduleView({
                       {course.timeRange.start} &ndash; {course.timeRange.end}
                     </span>
                     <span className="sv-tooltip-days">
-                      {course.days.join(" ")}
+                      {course.days.map((d) => t(`dayAbbr.${d}`)).join(" ")}
                     </span>
                   </div>
                 </div>
@@ -280,6 +279,36 @@ export default function ScheduleView({
           )}
         </div>
       </div>
+
+      {pendingClear && (
+        <div
+          className="sv-modal-overlay"
+          onClick={() => setPendingClear(false)}
+        >
+          <div className="sv-modal" onClick={(e) => e.stopPropagation()}>
+            <p className="sv-modal__message">
+              {t("scheduleView.clearConfirmMessage")}
+            </p>
+            <div className="sv-modal__actions">
+              <button
+                className="sv-modal__btn sv-modal__btn--cancel"
+                onClick={() => setPendingClear(false)}
+              >
+                {t("scheduleView.cancel")}
+              </button>
+              <button
+                className="sv-modal__btn sv-modal__btn--confirm"
+                onClick={() => {
+                  onClear();
+                  setPendingClear(false);
+                }}
+              >
+                {t("scheduleView.clearConfirmBtn")}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {pendingRemoval && (
         <div

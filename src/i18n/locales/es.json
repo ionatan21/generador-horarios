@@ -27,6 +27,8 @@
     "darkLabel": "Oscuro",
     "clearTitle": "Limpiar horario",
     "clearLabel": "Limpiar",
+    "clearConfirmMessage": "¿Eliminar todos los cursos del horario?",
+    "clearConfirmBtn": "Limpiar todo",
     "timeCol": "Hora",
     "modalMessage": "¿Eliminar <1>{{course}}</1> del <3>{{day}}</3>?",
     "cancel": "Cancelar",
