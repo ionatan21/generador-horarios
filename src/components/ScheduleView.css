@@ -1,3 +1,83 @@
+/* ── Delete modal ───────────────────────────────────────────── */
+.sv-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  animation: sv-fade-in 0.15s ease;
+}
+
+@keyframes sv-fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.sv-modal {
+  background: #fff;
+  border-radius: 0.75rem;
+  padding: 1.5rem 1.75rem;
+  box-shadow: 0 20px 40px rgba(15, 23, 42, 0.2);
+  max-width: 340px;
+  width: 90%;
+  animation: sv-modal-in 0.18s ease;
+}
+
+@keyframes sv-modal-in {
+  from { opacity: 0; transform: scale(0.93) translateY(6px); }
+  to   { opacity: 1; transform: scale(1)   translateY(0); }
+}
+
+.sv-modal__message {
+  font-size: 0.95rem;
+  color: #334155;
+  margin: 0 0 1.25rem;
+  line-height: 1.5;
+}
+
+.sv-modal__message strong {
+  color: #1e293b;
+}
+
+.sv-modal__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.6rem;
+}
+
+.sv-modal__btn {
+  padding: 0.4rem 1.1rem;
+  border-radius: 0.45rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.sv-modal__btn--cancel {
+  background: #f1f5f9;
+  border-color: #e2e8f0;
+  color: #475569;
+}
+
+.sv-modal__btn--cancel:hover {
+  background: #e2e8f0;
+}
+
+.sv-modal__btn--confirm {
+  background: #dc2626;
+  border-color: #dc2626;
+  color: #fff;
+}
+
+.sv-modal__btn--confirm:hover {
+  background: #b91c1c;
+  border-color: #b91c1c;
+}
+
 /* ── Toolbar ────────────────────────────────────────────────── */
 .sv-toolbar {
   display: flex;

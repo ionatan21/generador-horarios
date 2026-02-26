@@ -1,0 +1,187 @@
+/* ── App layout ─────────────────────────────────────── */
+.app-layout {
+  display: flex;
+  height: 100vh;
+  background: #f1f5f9;
+  overflow: hidden;
+}
+
+/* ── Left sidebar ────────────────────────────────────── */
+.app-sidebar {
+  width: 300px;
+  flex-shrink: 0;
+  background: #fff;
+  border-right: 1px solid #e2e8f0;
+  padding: 0 0 1.5rem;
+  overflow-y: auto;
+  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.04);
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── Brand header ──────────────────────────────────────────────────────────── */
+.app-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 1.1rem 1.25rem;
+  background: #1e40af;
+  flex-shrink: 0;
+}
+
+.app-brand__icon {
+  font-size: 1.4rem;
+  line-height: 1;
+  color: #93c5fd;
+}
+
+.app-brand__name {
+  font-size: 1.2rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  color: #fff;
+}
+
+/* ── Sidebar content wrapper ──────────────────────────────────────────────── */
+.app-sidebar .course-form {
+  padding: 1.25rem;
+  flex: 1;
+}
+
+/* ── Right main area ─────────────────────────────────── */
+.app-main {
+  flex: 1;
+  padding: 1.5rem;
+  overflow: auto;
+  background: #f8fafc;
+}
+
+/* ── Responsive: stack on small screens ─────────────── */
+@media (max-width: 640px) {
+  .app-layout {
+    flex-direction: column;
+    height: auto;
+  }
+
+  .app-sidebar {
+    width: 100%;
+    border-right: none;
+    border-bottom: 1px solid #e2e8f0;
+  }
+}
+
+/* ── Dark mode ───────────────────────────────────────── */
+.dark.app-layout {
+  background: #0f172a;
+}
+
+.dark .app-sidebar {
+  background: #1e293b;
+  border-color: #334155;
+  box-shadow: 2px 0 8px rgba(0,0,0,0.3);
+}
+
+.dark .app-brand {
+  background: #1e3a8a;
+}
+
+.dark .app-main {
+  background: #0f172a;
+}
+
+.dark .sv-scroll {
+  background: #1e293b;
+  border-color: #334155;
+}
+
+.dark .sv-toolbar {
+  background: #1e293b;
+  border-color: #334155;
+}
+
+.dark .sv-btn {
+  background: #334155;
+  border-color: #475569;
+  color: #cbd5e1;
+}
+
+.dark .sv-btn:hover {
+  background: #1e3a8a;
+  border-color: #3b82f6;
+  color: #93c5fd;
+}
+
+.dark .sv-btn--active {
+  background: #3b82f6;
+  border-color: #3b82f6;
+  color: #fff;
+}
+
+.dark .sv-btn--danger:hover {
+  background: #450a0a;
+  border-color: #dc2626;
+  color: #fca5a5;
+}
+
+.dark .sv-day-header {
+  background: #1e293b;
+  color: #94a3b8;
+  border-color: #334155;
+}
+
+.dark .sv-corner {
+  background: #1e293b;
+  border-color: #334155;
+}
+
+.dark .sv-time-label {
+  background: #1e293b;
+  color: #64748b;
+  border-color: #334155;
+}
+
+.dark .sv-bg-cell {
+  border-color: #1e293b;
+  background: #0f172a;
+}
+
+.dark .sv-bg-cell:nth-child(odd) {
+  background: #0f172a;
+}
+
+.dark .course-form {
+  color: #cbd5e1;
+}
+
+.dark .cf-label {
+  color: #94a3b8;
+}
+
+.dark .cf-input,
+.dark .cf-select {
+  background: #0f172a;
+  border-color: #334155;
+  color: #e2e8f0;
+}
+
+.dark .cf-day-btn {
+  background: #334155;
+  border-color: #475569;
+  color: #94a3b8;
+}
+
+.dark .cf-day-btn.active {
+  background: #1e40af;
+  border-color: #3b82f6;
+  color: #fff;
+}
+
+.dark .cf-submit {
+  background: #2563eb;
+}
+
+.dark .cf-conflict {
+  background: #450a0a;
+  color: #fca5a5;
+  border-color: #dc2626;
+}

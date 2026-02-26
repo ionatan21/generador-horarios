@@ -1,9 +1,9 @@
-import { useRef } from 'react'
+import { useRef, useState } from 'react'
 import html2canvas from 'html2canvas'
 import jsPDF from 'jspdf'
 import * as XLSX from 'xlsx'
 import { DAYS, DAY_NAMES, TimeSlot } from '../domain'
-import type { Schedule } from '../domain'
+import type { Schedule, Day, Course } from '../domain'
 import iconImage from '../assets/icon-image.svg'
 import iconPdf from '../assets/icon-pdf.svg'
 import iconExcel from '../assets/icon-excel.svg'
@@ -26,15 +26,22 @@ function contrastColor(hex: string): string {
   return (0.299 * r + 0.587 * g + 0.114 * b) / 255 > 0.55 ? '#1e293b' : '#ffffff'
 }
 
+interface PendingRemoval {
+  course: Course
+  day: Day
+}
+
 interface Props {
   schedule: Schedule
   darkMode: boolean
   onToggleDark: () => void
   onClear: () => void
+  onRemoveCourseFromDay: (courseId: string, day: Day) => void
 }
 
-export default function ScheduleView({ schedule, darkMode, onToggleDark, onClear }: Props) {
+export default function ScheduleView({ schedule, darkMode, onToggleDark, onClear, onRemoveCourseFromDay }: Props) {
   const gridRef = useRef<HTMLDivElement>(null)
+  const [pendingRemoval, setPendingRemoval] = useState<PendingRemoval | null>(null)
 
   async function exportImage() {
     if (!gridRef.current) return
@@ -138,7 +145,9 @@ export default function ScheduleView({ schedule, darkMode, onToggleDark, onClear
                     backgroundColor: course.color.hex,
                     color: fg,
                     borderColor: fg === '#ffffff' ? 'rgba(255,255,255,0.25)' : 'rgba(0,0,0,0.12)',
+                    cursor: 'pointer',
                   }}
+                  onClick={() => setPendingRemoval({ course, day })}
                 >
                   <span className="sv-course-name">{course.name}</span>
                   <div className="sv-tooltip">
@@ -152,6 +161,34 @@ export default function ScheduleView({ schedule, darkMode, onToggleDark, onClear
           )}
         </div>
       </div>
+
+      {pendingRemoval && (
+        <div className="sv-modal-overlay" onClick={() => setPendingRemoval(null)}>
+          <div className="sv-modal" onClick={(e) => e.stopPropagation()}>
+            <p className="sv-modal__message">
+              ¿Eliminar <strong>{pendingRemoval.course.name}</strong> del{' '}
+              <strong>{DAY_NAMES[pendingRemoval.day]}</strong>?
+            </p>
+            <div className="sv-modal__actions">
+              <button
+                className="sv-modal__btn sv-modal__btn--cancel"
+                onClick={() => setPendingRemoval(null)}
+              >
+                Cancelar
+              </button>
+              <button
+                className="sv-modal__btn sv-modal__btn--confirm"
+                onClick={() => {
+                  onRemoveCourseFromDay(pendingRemoval.course.id, pendingRemoval.day)
+                  setPendingRemoval(null)
+                }}
+              >
+                Eliminar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </section>
   )
 }
