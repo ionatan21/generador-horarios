@@ -205,13 +205,22 @@
   border-color: #c0c0c0;
 }
 
+.dark .sv-time-label__start {
+  color: #94a3b8;
+}
+
+.dark .sv-time-label__end {
+  color: #64748b;
+}
+
 .dark .sv-bg-cell {
   border-color: #ffffff;
   background: #000000;
 }
 
-.dark .sv-bg-cell:nth-child(odd) {
-  background: #000000;
+.dark .sv-bg-cell:hover {
+  background: #2d2e2e;
+  transition: background 0.1s;
 }
 
 .dark .course-form {

@@ -270,24 +270,37 @@
   left: 0;
   z-index: 1;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
+  gap: 2px;
   background: #f8fafc;
   border-right: 2px solid #e2e8f0;
-  font-size: 0.68rem;
-  font-weight: 600;
   color: #64748b;
   letter-spacing: 0.02em;
 }
 
+.sv-time-label__start {
+  font-size: 0.68rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.sv-time-label__end {
+  font-size: 0.58rem;
+  font-weight: 500;
+  opacity: 0.65;
+  line-height: 1;
+}
+
 /* ── Background slot cells (grid lines only, no stacking context) */
 .sv-bg-cell {
-  border-bottom: 1px solid #f1f5f9;
-  border-right: 1px solid #f1f5f9;
+  border-bottom: 1px solid #cdd2d6;
+  border-right: 1px solid #cdd2d6;
 }
 
 .sv-bg-cell:hover {
-  background: #f8faff;
+  background: #f1f2f4;
   transition: background 0.1s;
 }
 

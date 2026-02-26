@@ -196,7 +196,7 @@ export default function ScheduleView({
     ];
     const rows = SLOTS.map((slot) => {
       const slotHour = parseInt(slot.start.split(":")[0], 10);
-      const row: string[] = [slot.start];
+      const row: string[] = [`${slot.start} - ${slot.end}`];
       for (const day of DAYS) {
         const course = schedule
           .getCoursesForDay(day)
@@ -321,7 +321,8 @@ export default function ScheduleView({
                   className="sv-time-label"
                   style={{ gridColumn: TIME_COL, gridRow }}
                 >
-                  {slot.start}
+                  <span className="sv-time-label__start">{slot.start}</span>
+                  <span className="sv-time-label__end">{slot.end}</span>
                 </div>
                 {DAYS.map((_day, di) => (
                   <div
