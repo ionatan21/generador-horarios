@@ -169,6 +169,27 @@
   flex-shrink: 0;
 }
 
+/* ── Mobile: icons only ───────────────────────────── */
+@media (max-width: 768px) {
+  .sv-btn__label {
+    display: none;
+  }
+
+  .sv-btn--lang .sv-btn__label {
+    display: inline;
+  }
+
+  .sv-btn--w-lg,
+  .sv-btn--w-md {
+    min-width: unset;
+  }
+
+  .sv-toolbar {
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+}
+
 /* ── Outer shell ─────────────────────────────────────────────── */
 .schedule-view {
   display: flex;

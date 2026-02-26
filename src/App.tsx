@@ -1,13 +1,23 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect, useRef } from 'react'
+import logo from './assets/logo.svg'
 import CourseForm from './components/CourseForm'
 import ScheduleView from './components/ScheduleView'
 import { Schedule, Course } from './domain'
 import type { Day } from './domain'
+import { usePersistedCourses } from './hooks/usePersistedCourses'
 import './App.css'
 
 function App() {
-  const [courses, setCourses]     = useState<Course[]>([])
-  const [darkMode, setDarkMode]   = useState(false)
+  const { courses, setCourses, clearCourses } = usePersistedCourses()
+  const [darkMode, setDarkMode] = useState<boolean>(
+    () => localStorage.getItem('darkMode') === 'true',
+  )
+  const [sidebarOpen, setSidebarOpen] = useState(false)
+  const mainRef = useRef<HTMLElement>(null)
+
+  useEffect(() => {
+    localStorage.setItem('darkMode', String(darkMode))
+  }, [darkMode])
 
   const schedule = useMemo(() => {
     const s = new Schedule()
@@ -17,10 +27,16 @@ function App() {
 
   function handleAddCourse(course: Course) {
     setCourses((prev) => [...prev, course])
+    if (window.innerWidth <= 768) {
+      setSidebarOpen(false)
+      setTimeout(() => {
+        mainRef.current?.scrollIntoView({ behavior: 'smooth' })
+      }, 50)
+    }
   }
 
   function handleClear() {
-    setCourses([])
+    clearCourses()
   }
 
   function handleRemoveCourseFromDay(courseId: string, day: Day) {
@@ -36,15 +52,24 @@ function App() {
 
   return (
     <div className={`app-layout${darkMode ? ' dark' : ''}`}>
-      <aside className="app-sidebar">
+      <aside className={`app-sidebar${sidebarOpen ? ' app-sidebar--open' : ''}`}>
         <div className="app-brand">
-          <span className="app-brand__icon">▦</span>
+          <img src={logo} className="app-brand__icon" alt="ClassGrid logo" />
           <span className="app-brand__name">ClassGrid</span>
+          <button
+            className="app-brand__toggle"
+            onClick={() => setSidebarOpen((o) => !o)}
+            aria-label="Toggle form"
+          >
+            {sidebarOpen ? '✕' : '＋'}
+          </button>
         </div>
-        <CourseForm schedule={schedule} onAdd={handleAddCourse} />
+        <div className="app-sidebar__body">
+          <CourseForm schedule={schedule} onAdd={handleAddCourse} />
+        </div>
       </aside>
 
-      <main className="app-main">
+      <main className="app-main" ref={mainRef}>
         <ScheduleView
           schedule={schedule}
           darkMode={darkMode}

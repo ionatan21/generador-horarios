@@ -171,7 +171,7 @@ export default function CourseForm({ schedule, onAdd }: Props) {
           <label htmlFor="end-time" className="cf-label">{t('courseForm.toLabel')}</label>
           <select
             id="end-time"
-            className={`cf-input cf-select ${timeError ? 'cf-input--error' : ''}`}
+            className={`cf-input cf-select ${(touched && !form.endTime) || timeError ? 'cf-input--error' : ''}`}
             value={form.endTime}
             onChange={(e) => setForm((f) => ({ ...f, endTime: e.target.value }))}
           >
@@ -182,6 +182,9 @@ export default function CourseForm({ schedule, onAdd }: Props) {
           </select>
         </div>
       </div>
+      {touched && !form.endTime && !timeError && (
+        <span className="cf-error-msg">{t('courseForm.endTimeRequired')}</span>
+      )}
       {timeError && <span className="cf-error-msg">{timeError}</span>}
 
       {/* Color picker */}
@@ -222,6 +225,19 @@ export default function CourseForm({ schedule, onAdd }: Props) {
           {t('courseForm.addBtn')}
         </button>
       </div>
+
+      {/* Footer */}
+      <p className="cf-footer">
+        {t('courseForm.footer')}{' '}
+        <a
+          href="https://portfolio-jonatan-barrios.vercel.app/"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="cf-footer__link"
+        >
+          {t('courseForm.footerAuthor')}
+        </a>
+      </p>
     </form>
   )
 }

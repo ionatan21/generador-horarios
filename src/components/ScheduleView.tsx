@@ -187,7 +187,7 @@ export default function ScheduleView({
             />
           </button>
           <button
-            className="sv-btn sv-btn--w-sm"
+            className="sv-btn sv-btn--w-sm sv-btn--lang"
             onClick={toggleLang}
             title={t("lang." + (i18n.language === "es" ? "en" : "es"))}
           >

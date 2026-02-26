@@ -12,7 +12,10 @@
     "colorCustomTitle": "Custom color",
     "addBtn": "Add course",
     "timeError": "End time must be after start time.",
-    "conflict": "Conflict with \"{{name}}\" on {{day}}"
+    "endTimeRequired": "Please select an end time.",
+    "conflict": "Conflict with \"{{name}}\" on {{day}}",
+    "footer": "Created by",
+    "footerAuthor": "Jonatan Barrios"
   },
   "scheduleView": {
     "title": "Weekly Schedule",

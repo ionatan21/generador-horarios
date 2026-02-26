@@ -12,7 +12,10 @@
     "colorCustomTitle": "Color personalizado",
     "addBtn": "Agregar curso",
     "timeError": "La hora de finalización debe ser mayor que la de inicio.",
-    "conflict": "Conflicto con \"{{name}}\" el día {{day}}"
+    "endTimeRequired": "Selecciona una hora de finalización.",
+    "conflict": "Conflicto con \"{{name}}\" el día {{day}}",
+    "footer": "Creado por",
+    "footerAuthor": "Jonatan Barrios"
   },
   "scheduleView": {
     "title": "Horario semanal",
