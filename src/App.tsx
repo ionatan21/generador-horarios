@@ -70,6 +70,8 @@ function App() {
 
   /** When the URL has ?s=<id>, load that shared schedule once on mount. */
   const [isSharedView, setIsSharedView] = useState(false)
+  // Volatile: holds the schedule fetched from a shared link, never persisted
+  const [sharedCourses, setSharedCourses] = useState<Course[]>([])
   // Persisted share ID — reused so we never duplicate a document in the DB
   const [currentShareId, setCurrentShareId] = useState<string | null>(
     () => localStorage.getItem('shareId'),
@@ -95,14 +97,14 @@ function App() {
       .then((r) => r.json())
       .then((data: { schedule?: SerializedCourse[] }) => {
         if (Array.isArray(data.schedule)) {
-          setCourses(deserializeCourses(data.schedule))
+          // Load into volatile state — user's own localStorage is untouched
+          setSharedCourses(deserializeCourses(data.schedule))
           saveShareId(shareId)
         }
       })
       .catch(() => {
         // silently ignore; user keeps their existing courses
       })
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   useEffect(() => {
@@ -143,6 +145,9 @@ function App() {
   }
 
   function handleDismissSharedView() {
+    // Persist the shared schedule to localStorage now that the user claims it
+    setCourses(sharedCourses)
+    setSharedCourses([])
     setIsSharedView(false)
     // Remove query param from URL without reloading
     const url = new URL(window.location.href)
@@ -152,11 +157,14 @@ function App() {
 
   // ── Schedule ───────────────────────────────────────────────────────────────
 
+  // In shared view show the fetched schedule; otherwise show the user's own
+  const displayedCourses = isSharedView ? sharedCourses : courses
+
   const schedule = useMemo(() => {
     const s = new Schedule()
-    for (const c of courses) s.tryAddCourse(c)
+    for (const c of displayedCourses) s.tryAddCourse(c)
     return s
-  }, [courses])
+  }, [displayedCourses])
 
   function handleAddCourse(course: Course) {
     clearShareId()
