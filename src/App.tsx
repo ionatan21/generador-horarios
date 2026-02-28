@@ -70,6 +70,20 @@ function App() {
 
   /** When the URL has ?s=<id>, load that shared schedule once on mount. */
   const [isSharedView, setIsSharedView] = useState(false)
+  // Persisted share ID — reused so we never duplicate a document in the DB
+  const [currentShareId, setCurrentShareId] = useState<string | null>(
+    () => localStorage.getItem('shareId'),
+  )
+
+  function saveShareId(id: string) {
+    setCurrentShareId(id)
+    localStorage.setItem('shareId', id)
+  }
+
+  function clearShareId() {
+    setCurrentShareId(null)
+    localStorage.removeItem('shareId')
+  }
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search)
@@ -82,6 +96,7 @@ function App() {
       .then((data: { schedule?: SerializedCourse[] }) => {
         if (Array.isArray(data.schedule)) {
           setCourses(deserializeCourses(data.schedule))
+          saveShareId(shareId)
         }
       })
       .catch(() => {
@@ -100,6 +115,12 @@ function App() {
 
   async function handleShare() {
     if (courses.length === 0) return
+    // Reuse existing share ID if the schedule hasn't been modified
+    if (currentShareId) {
+      const url = `${window.location.origin}?s=${currentShareId}`
+      setShareState({ status: 'done', url })
+      return
+    }
     setShareState({ status: 'loading' })
     try {
       const res = await fetch('/api/createSchedule', {
@@ -109,6 +130,7 @@ function App() {
       })
       const data: { id?: string; error?: string } = await res.json()
       if (!res.ok || !data.id) throw new Error(data.error ?? 'Unknown error')
+      saveShareId(data.id)
       const url = `${window.location.origin}?s=${data.id}`
       setShareState({ status: 'done', url })
     } catch {
@@ -137,6 +159,7 @@ function App() {
   }, [courses])
 
   function handleAddCourse(course: Course) {
+    clearShareId()
     setCourses((prev) => [...prev, course])
     if (window.innerWidth <= 768) {
       setSidebarOpen(false)
@@ -147,10 +170,12 @@ function App() {
   }
 
   function handleClear() {
+    clearShareId()
     clearCourses()
   }
 
   function handleRemoveCourseFromDay(courseId: string, day: Day) {
+    clearShareId()
     setCourses((prev) =>
       prev.flatMap((c) => {
         if (c.id !== courseId) return [c]
