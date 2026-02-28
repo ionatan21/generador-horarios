@@ -102,6 +102,11 @@ export default function ScheduleView({
     const cs = window.getComputedStyle(grid);
     const PADDING = 24;
 
+    // Use the full viewport width so the export is always as wide as possible,
+    // regardless of whether the sidebar is open or collapsed.
+    const exportWidth = document.documentElement.clientWidth;
+    const gridWidth = exportWidth - 2 * PADDING;
+
     // Padded wrapper — this is what html2canvas will capture
     const wrapper = document.createElement("div");
     wrapper.style.cssText = [
@@ -111,20 +116,21 @@ export default function ScheduleView({
       `padding: ${PADDING}px`,
       `background: ${darkMode ? "#0f172a" : "#f8fafc"}`,
       "box-sizing: border-box",
-      "width: auto",
+      `width: ${exportWidth}px`,
       "height: auto",
     ].join("; ");
 
     // Clone the grid
     const clone = grid.cloneNode(true) as HTMLElement;
-    const fullWidth = grid.scrollWidth;
     const fullHeight = grid.scrollHeight;
 
     clone.style.cssText = "";          // wipe inline styles from original
     clone.style.display = "grid";
-    clone.style.gridTemplateColumns = cs.gridTemplateColumns;
+    // Use the original CSS definition (not the computed resolved pixel values)
+    // so that 1fr columns re-expand to fill the new wider width.
+    clone.style.gridTemplateColumns = "64px repeat(7, minmax(80px, 1fr))";
     clone.style.gridTemplateRows = cs.gridTemplateRows;
-    clone.style.width = `${fullWidth}px`;
+    clone.style.width = `${gridWidth}px`;
     clone.style.height = `${fullHeight}px`;  // explicit — prevents h2c from clipping
     clone.style.position = "relative";
     clone.style.overflow = "visible";
