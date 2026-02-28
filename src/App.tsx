@@ -1,4 +1,5 @@
 import { useState, useMemo, useEffect, useRef } from 'react'
+import { useTranslation } from 'react-i18next'
 import logo from './assets/logo.svg'
 import CourseForm from './components/CourseForm'
 import ScheduleView from './components/ScheduleView'
@@ -53,6 +54,14 @@ export interface ShareState {
 
 function App() {
   const { courses, setCourses, clearCourses } = usePersistedCourses()
+  const { i18n } = useTranslation()
+
+  function toggleLang() {
+    const next = i18n.language === 'es' ? 'en' : 'es'
+    i18n.changeLanguage(next)
+    localStorage.setItem('lang', next)
+  }
+
   const [darkMode, setDarkMode] = useState<boolean>(
     () => localStorage.getItem('darkMode') === 'true',
   )
@@ -158,6 +167,13 @@ function App() {
         <div className="app-brand">
           <img src={logo} className="app-brand__icon" alt="ClassGrid logo" />
           <span className="app-brand__name">ClassGrid</span>
+          <button
+            className="app-brand__lang"
+            onClick={toggleLang}
+            aria-label="Toggle language"
+          >
+            {i18n.language === 'es' ? 'EN' : 'ES'}
+          </button>
           <button
             className="app-brand__toggle"
             onClick={() => setSidebarOpen((o) => !o)}

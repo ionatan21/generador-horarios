@@ -44,7 +44,7 @@
     "shareCopy": "Copy",
     "shareCopied": "Copied!",
     "shareClose": "Close",
-    "shareReadOnly": "This is a shared schedule (read-only).",
+    "shareReadOnly": "Shared schedule (read-only)",
     "shareReadOnlyDismiss": "Make it mine"
   },
   "days": {

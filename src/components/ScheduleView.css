@@ -179,6 +179,10 @@
     display: inline;
   }
 
+  .sv-btn--lang {
+    display: none;
+  }
+
   .sv-btn--w-lg,
   .sv-btn--w-md {
     min-width: unset;
@@ -471,7 +475,10 @@
   transform: translateX(-50%);
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.5rem 0.75rem;
+  max-width: calc(100vw - 2rem);
   padding: 0.6rem 1rem;
   background: #1e293b;
   color: #e2e8f0;
@@ -479,7 +486,6 @@
   font-size: 0.82rem;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
   z-index: 90;
-  white-space: nowrap;
   animation: sv-fade-in 0.2s ease;
 }
 
