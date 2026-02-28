@@ -1,4 +1,5 @@
 import { useRef, useState, Fragment } from "react";
+import { createPortal } from "react-dom";
 import { useTranslation, Trans } from "react-i18next";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
@@ -66,6 +67,14 @@ export default function ScheduleView({
   const { t, i18n } = useTranslation();
   const gridRef = useRef<HTMLDivElement>(null);
   const [pendingClear, setPendingClear] = useState(false);
+
+  const [tooltip, setTooltip] = useState<{
+    course: Course;
+    x: number;
+    blockTop: number;
+    blockBottom: number;
+    tipBelow: boolean;
+  } | null>(null);
 
   function toggleLang() {
     const next = i18n.language === "es" ? "en" : "es";
@@ -391,6 +400,17 @@ export default function ScheduleView({
                     cursor: isSharedView ? "default" : "pointer",
                   }}
                   onClick={() => { if (!isSharedView) setPendingRemoval({ course, day }) }}
+                  onMouseEnter={(e) => {
+                    const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
+                    setTooltip({
+                      course,
+                      x: rect.left + rect.width / 2,
+                      blockTop: rect.top,
+                      blockBottom: rect.bottom,
+                      tipBelow,
+                    });
+                  }}
+                  onMouseLeave={() => setTooltip(null)}
                 >
                   <span
                     className="sv-course-name"
@@ -409,15 +429,7 @@ export default function ScheduleView({
                   >
                     {course.name}
                   </span>
-                  <div className="sv-tooltip">
-                    <strong>{course.name}</strong>
-                    <span>
-                      {course.timeRange.start} &ndash; {course.timeRange.end}
-                    </span>
-                    <span className="sv-tooltip-days">
-                      {course.days.map((d) => t(`days.${d}`)).join(", ")}
-                    </span>
-                  </div>
+
                 </div>
               );
             }),
@@ -508,6 +520,27 @@ export default function ScheduleView({
             </button>
           )}
         </div>
+      )}
+
+      {tooltip && createPortal(
+        <div
+          className={`sv-tooltip-portal${tooltip.tipBelow ? " sv-tooltip-portal--below" : ""}`}
+          style={{
+            left: tooltip.x,
+            ...(tooltip.tipBelow
+              ? { top: tooltip.blockBottom + 7 }
+              : { top: tooltip.blockTop - 7 }),
+          }}
+        >
+          <strong>{tooltip.course.name}</strong>
+          <span>
+            {tooltip.course.timeRange.start} &ndash; {tooltip.course.timeRange.end}
+          </span>
+          <span className="sv-tooltip-days">
+            {tooltip.course.days.map((d) => t(`days.${d}`)).join(", ")}
+          </span>
+        </div>,
+        document.body,
       )}
 
       {isSharedView && (

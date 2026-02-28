@@ -332,7 +332,6 @@
 .sv-course-block:hover {
   transform: scale(1.05);
   box-shadow: 0 4px 14px rgba(0, 0, 0, 0.22);
-  z-index: 30;
 }
 
 .sv-course-name {
@@ -348,27 +347,25 @@
   pointer-events: none;
 }
 
-/* ── Hover tooltip ───────────────────────────────────────────── */
-.sv-tooltip {
-  display: none;
-  position: absolute;
-  bottom: calc(100% + 7px);
-  left: 50%;
-  transform: translateX(-50%);
+/* ── Hover tooltip (portal — rendered in document.body) ─────── */
+.sv-tooltip-portal {
+  position: fixed;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  transform: translateX(-50%) translateY(-100%);
   background: #1e1e1e;
   color: #f1f5f9;
   border-radius: 7px;
   padding: 7px 11px;
   font-size: 0.72rem;
   white-space: nowrap;
-  flex-direction: column;
-  gap: 3px;
-  z-index: 20;
+  z-index: 9999;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.28);
   pointer-events: none;
 }
 
-.sv-tooltip::after {
+.sv-tooltip-portal::after {
   content: '';
   position: absolute;
   top: 100%;
@@ -378,24 +375,19 @@
   border-top-color: #1e293b;
 }
 
-/* Tooltip below variant (for courses near the top of the grid) */
-.sv-course-block--tip-below .sv-tooltip {
-  bottom: auto;
-  top: calc(100% + 7px);
+/* Tooltip below variant (courses near the top of the grid) */
+.sv-tooltip-portal--below {
+  transform: translateX(-50%);
 }
 
-.sv-course-block--tip-below .sv-tooltip::after {
+.sv-tooltip-portal--below::after {
   top: auto;
   bottom: 100%;
   border-top-color: transparent;
   border-bottom-color: #1e293b;
 }
 
-.sv-course-block:hover .sv-tooltip {
-  display: flex;
-}
-
-.sv-tooltip strong {
+.sv-tooltip-portal strong {
   font-size: 0.78rem;
 }
 
