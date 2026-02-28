@@ -183,7 +183,7 @@ function App() {
           </button>
         </div>
         <div className="app-sidebar__body">
-          <CourseForm schedule={schedule} onAdd={handleAddCourse} />
+          <CourseForm schedule={schedule} onAdd={handleAddCourse} isSharedView={isSharedView} />
         </div>
       </aside>
 

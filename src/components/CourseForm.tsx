@@ -29,9 +29,10 @@ const EMPTY_FORM = {
 interface Props {
   schedule: Schedule
   onAdd: (course: Course) => void
+  isSharedView?: boolean
 }
 
-export default function CourseForm({ schedule, onAdd }: Props) {
+export default function CourseForm({ schedule, onAdd, isSharedView = false }: Props) {
   const { t } = useTranslation()
   const [form, setForm] = useState(EMPTY_FORM)
   const [touched, setTouched] = useState(false)
@@ -101,6 +102,10 @@ export default function CourseForm({ schedule, onAdd }: Props) {
   return (
     <form className="course-form" onSubmit={handleSubmit} noValidate>
       <h2 className="cf-title">{t('courseForm.title')}</h2>
+      {isSharedView && (
+        <p className="cf-readonly-notice">{t('courseForm.readOnlyNotice')}</p>
+      )}
+      <fieldset disabled={isSharedView} className="cf-fieldset">
 
       {/* Course name */}
       <div className="cf-field">
@@ -238,6 +243,7 @@ export default function CourseForm({ schedule, onAdd }: Props) {
           {t('courseForm.footerAuthor')}
         </a>
       </p>
+      </fieldset>
     </form>
   )
 }

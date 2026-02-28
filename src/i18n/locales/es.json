@@ -15,7 +15,8 @@
     "endTimeRequired": "Selecciona una hora de finalización.",
     "conflict": "Conflicto con \"{{name}}\" el día {{day}}",
     "footer": "Creado por",
-    "footerAuthor": "Jonatan Barrios"
+    "footerAuthor": "Jonatan Barrios",
+    "readOnlyNotice": "Horario en modo lectura. Hazlo tuyo para editarlo."
   },
   "scheduleView": {
     "title": "Horario semanal",

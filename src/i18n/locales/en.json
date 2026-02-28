@@ -15,7 +15,8 @@
     "endTimeRequired": "Please select an end time.",
     "conflict": "Conflict with \"{{name}}\" on {{day}}",
     "footer": "Created by",
-    "footerAuthor": "Jonatan Barrios"
+    "footerAuthor": "Jonatan Barrios",
+    "readOnlyNotice": "Read-only schedule. Make it yours to edit it."
   },
   "scheduleView": {
     "title": "Weekly Schedule",

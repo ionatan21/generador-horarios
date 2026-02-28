@@ -315,6 +315,7 @@ export default function ScheduleView({
             className="sv-btn sv-btn--danger sv-btn--w-md"
             onClick={() => setPendingClear(true)}
             title={t("scheduleView.clearTitle")}
+            disabled={isSharedView}
           >
             <img
               className="sv-btn__icon"
@@ -396,9 +397,9 @@ export default function ScheduleView({
                       fg === "#ffffff"
                         ? "rgba(255,255,255,0.25)"
                         : "rgba(0,0,0,0.12)",
-                    cursor: "pointer",
+                    cursor: isSharedView ? "default" : "pointer",
                   }}
-                  onClick={() => setPendingRemoval({ course, day })}
+                  onClick={() => { if (!isSharedView) setPendingRemoval({ course, day }) }}
                 >
                   <span className="sv-course-name">{course.name}</span>
                   <div className="sv-tooltip">
