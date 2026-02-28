@@ -277,6 +277,7 @@
 
 /* ── Read-only notice ────────────────────────────── */
 .cf-readonly-notice {
+  margin: 0;
   padding: 0.55rem 0.85rem;
   background: #fef9c3;
   color: #854d0e;
