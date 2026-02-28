@@ -35,7 +35,17 @@
     "timeCol": "Time",
     "modalMessage": "Remove <1>{{course}}</1> from <3>{{day}}</3>?",
     "cancel": "Cancel",
-    "delete": "Remove"
+    "delete": "Remove",
+    "shareTitle": "Share schedule",
+    "shareLabel": "Share",
+    "shareLoading": "Generating link…",
+    "shareError": "Could not generate link. Try again.",
+    "shareDone": "Your schedule link:",
+    "shareCopy": "Copy",
+    "shareCopied": "Copied!",
+    "shareClose": "Close",
+    "shareReadOnly": "This is a shared schedule (read-only).",
+    "shareReadOnlyDismiss": "Make it mine"
   },
   "days": {
     "L": "Monday",

@@ -1,0 +1,13 @@
+{
+  "version": 2,
+  "routes": [
+    {
+      "src": "/api/createSchedule",
+      "dest": "/api/createSchedule.ts"
+    },
+    {
+      "src": "/api/getSchedule",
+      "dest": "/api/getSchedule.ts"
+    }
+  ]
+}

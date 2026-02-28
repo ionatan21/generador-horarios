@@ -35,7 +35,17 @@
     "timeCol": "Hora",
     "modalMessage": "¿Eliminar <1>{{course}}</1> del <3>{{day}}</3>?",
     "cancel": "Cancelar",
-    "delete": "Eliminar"
+    "delete": "Eliminar",
+    "shareTitle": "Compartir horario",
+    "shareLabel": "Compartir",
+    "shareLoading": "Generando enlace…",
+    "shareError": "No se pudo generar el enlace. Intenta de nuevo.",
+    "shareDone": "Tu enlace de horario:",
+    "shareCopy": "Copiar",
+    "shareCopied": "¡Copiado!",
+    "shareClose": "Cerrar",
+    "shareReadOnly": "Este es un horario compartido (solo lectura).",
+    "shareReadOnlyDismiss": "Hacer mío"
   },
   "days": {
     "L": "Lunes",

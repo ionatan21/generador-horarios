@@ -44,6 +44,11 @@ interface Props {
   onToggleDark: () => void;
   onClear: () => void;
   onRemoveCourseFromDay: (courseId: string, day: Day) => void;
+  onShare: () => void;
+  shareState: { status: 'idle' | 'loading' | 'done' | 'error'; url?: string };
+  onShareClose: () => void;
+  isSharedView: boolean;
+  onDismissSharedView: () => void;
 }
 
 export default function ScheduleView({
@@ -52,15 +57,29 @@ export default function ScheduleView({
   onToggleDark,
   onClear,
   onRemoveCourseFromDay,
+  onShare,
+  shareState,
+  onShareClose,
+  isSharedView,
+  onDismissSharedView,
 }: Props) {
   const { t, i18n } = useTranslation();
   const gridRef = useRef<HTMLDivElement>(null);
   const [pendingClear, setPendingClear] = useState(false);
+  const [copied, setCopied] = useState(false);
 
   function toggleLang() {
     const next = i18n.language === "es" ? "en" : "es";
     i18n.changeLanguage(next);
     localStorage.setItem("lang", next);
+  }
+
+  function handleCopy() {
+    if (!shareState.url) return;
+    navigator.clipboard.writeText(shareState.url).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    });
   }
   const [pendingRemoval, setPendingRemoval] = useState<PendingRemoval | null>(
     null,
@@ -260,6 +279,25 @@ export default function ScheduleView({
               {t("scheduleView.exportExcel")}
             </span>
           </button>
+          <button
+            className="sv-btn sv-btn--w-md sv-btn--share"
+            onClick={onShare}
+            disabled={shareState.status === "loading"}
+            title={t("scheduleView.shareTitle")}
+          >
+            <svg className="sv-btn__icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <circle cx="15" cy="4" r="2"/>
+              <circle cx="5" cy="10" r="2"/>
+              <circle cx="15" cy="16" r="2"/>
+              <line x1="7" y1="11" x2="13" y2="15"/>
+              <line x1="13" y1="5" x2="7" y2="9"/>
+            </svg>
+            <span className="sv-btn__label">
+              {shareState.status === "loading"
+                ? t("scheduleView.shareLoading")
+                : t("scheduleView.shareLabel")}
+            </span>
+          </button>
           <div className="sv-toolbar__sep" />
 
           <button
@@ -446,6 +484,57 @@ export default function ScheduleView({
               </button>
             </div>
           </div>
+        </div>
+      )}
+
+      {(shareState.status === "done" || shareState.status === "error") && (
+        <div className="sv-modal-overlay" onClick={onShareClose}>
+          <div className="sv-modal sv-modal--share" onClick={(e) => e.stopPropagation()}>
+            {shareState.status === "error" ? (
+              <p className="sv-modal__message sv-modal__message--error">
+                {t("scheduleView.shareError")}
+              </p>
+            ) : (
+              <>
+                <p className="sv-modal__message">{t("scheduleView.shareDone")}</p>
+                <div className="sv-share-url">
+                  <input
+                    className="sv-share-url__input"
+                    type="text"
+                    readOnly
+                    value={shareState.url}
+                    onFocus={(e) => e.currentTarget.select()}
+                  />
+                  <button
+                    className={`sv-modal__btn sv-modal__btn--confirm${copied ? " sv-modal__btn--copied" : ""}`}
+                    onClick={handleCopy}
+                  >
+                    {copied ? t("scheduleView.shareCopied") : t("scheduleView.shareCopy")}
+                  </button>
+                </div>
+              </>
+            )}
+            <div className="sv-modal__actions">
+              <button
+                className="sv-modal__btn sv-modal__btn--cancel"
+                onClick={onShareClose}
+              >
+                {t("scheduleView.shareClose")}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {isSharedView && (
+        <div className="sv-shared-banner">
+          <span>{t("scheduleView.shareReadOnly")}</span>
+          <button
+            className="sv-shared-banner__btn"
+            onClick={onDismissSharedView}
+          >
+            {t("scheduleView.shareReadOnlyDismiss")}
+          </button>
         </div>
       )}
     </section>

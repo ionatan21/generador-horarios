@@ -263,3 +263,39 @@
   color: #fca5a5;
   border-color: #dc2626;
 }
+
+/* ── Share – dark mode ──────────────────────────────── */
+.dark .sv-modal {
+  background: #1e293b;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+}
+
+.dark .sv-modal__message {
+  color: #cbd5e1;
+}
+
+.dark .sv-modal__message strong {
+  color: #e2e8f0;
+}
+
+.dark .sv-modal__btn--cancel {
+  background: #0f172a;
+  border-color: #334155;
+  color: #94a3b8;
+}
+
+.dark .sv-modal__btn--cancel:hover {
+  background: #1e293b;
+}
+
+.dark .sv-share-url__input {
+  background: #0f172a;
+  border-color: #334155;
+  color: #e2e8f0;
+}
+
+.dark .sv-btn--share:hover {
+  background: #052e16;
+  border-color: #166534;
+  color: #86efac;
+}

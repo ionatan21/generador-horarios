@@ -2,10 +2,54 @@ import { useState, useMemo, useEffect, useRef } from 'react'
 import logo from './assets/logo.svg'
 import CourseForm from './components/CourseForm'
 import ScheduleView from './components/ScheduleView'
-import { Schedule, Course } from './domain'
+import { Schedule, Course, CourseColor, TimeRange } from './domain'
 import type { Day } from './domain'
 import { usePersistedCourses } from './hooks/usePersistedCourses'
 import './App.css'
+
+// ── Serialization helpers (mirrors usePersistedCourses format) ────────────────
+
+interface SerializedCourse {
+  id: string
+  name: string
+  days: Day[]
+  start: string
+  end: string
+  color: string
+}
+
+function serializeCourses(courses: Course[]): SerializedCourse[] {
+  return courses.map((c) => ({
+    id: c.id,
+    name: c.name,
+    days: [...c.days],
+    start: c.timeRange.start,
+    end: c.timeRange.end,
+    color: c.color.hex,
+  }))
+}
+
+function deserializeCourses(data: SerializedCourse[]): Course[] {
+  return data.map(
+    (d) =>
+      new Course(
+        d.name,
+        d.days,
+        new TimeRange(d.start, d.end),
+        new CourseColor(d.color),
+        d.id,
+      ),
+  )
+}
+
+// ── Share state ───────────────────────────────────────────────────────────────
+
+export type ShareStatus = 'idle' | 'loading' | 'done' | 'error'
+
+export interface ShareState {
+  status: ShareStatus
+  url?: string
+}
 
 function App() {
   const { courses, setCourses, clearCourses } = usePersistedCourses()
@@ -15,9 +59,67 @@ function App() {
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const mainRef = useRef<HTMLElement>(null)
 
+  /** When the URL has ?s=<id>, load that shared schedule once on mount. */
+  const [isSharedView, setIsSharedView] = useState(false)
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search)
+    const shareId = params.get('s')
+    if (!shareId) return
+
+    setIsSharedView(true)
+    fetch(`/api/getSchedule?id=${encodeURIComponent(shareId)}`)
+      .then((r) => r.json())
+      .then((data: { schedule?: SerializedCourse[] }) => {
+        if (Array.isArray(data.schedule)) {
+          setCourses(deserializeCourses(data.schedule))
+        }
+      })
+      .catch(() => {
+        // silently ignore; user keeps their existing courses
+      })
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
   useEffect(() => {
     localStorage.setItem('darkMode', String(darkMode))
   }, [darkMode])
+
+  // ── Share ──────────────────────────────────────────────────────────────────
+
+  const [shareState, setShareState] = useState<ShareState>({ status: 'idle' })
+
+  async function handleShare() {
+    if (courses.length === 0) return
+    setShareState({ status: 'loading' })
+    try {
+      const res = await fetch('/api/createSchedule', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ schedule: serializeCourses(courses) }),
+      })
+      const data: { id?: string; error?: string } = await res.json()
+      if (!res.ok || !data.id) throw new Error(data.error ?? 'Unknown error')
+      const url = `${window.location.origin}?s=${data.id}`
+      setShareState({ status: 'done', url })
+    } catch {
+      setShareState({ status: 'error' })
+    }
+  }
+
+  function handleShareClose() {
+    setShareState({ status: 'idle' })
+  }
+
+  function handleDismissSharedView() {
+    setIsSharedView(false)
+    // Remove query param from URL without reloading
+    const url = new URL(window.location.href)
+    url.searchParams.delete('s')
+    window.history.replaceState({}, '', url.pathname)
+  }
+
+  // ── Schedule ───────────────────────────────────────────────────────────────
 
   const schedule = useMemo(() => {
     const s = new Schedule()
@@ -76,6 +178,11 @@ function App() {
           onToggleDark={() => setDarkMode((d) => !d)}
           onClear={handleClear}
           onRemoveCourseFromDay={handleRemoveCourseFromDay}
+          onShare={handleShare}
+          shareState={shareState}
+          onShareClose={handleShareClose}
+          isSharedView={isSharedView}
+          onDismissSharedView={handleDismissSharedView}
         />
       </main>
     </div>
