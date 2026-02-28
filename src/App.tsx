@@ -1,6 +1,8 @@
 import { useState, useMemo, useEffect, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import logo from './assets/logo.svg'
+import iconMoon from './assets/icon-moon.svg'
+import iconSun from './assets/icon-sun.svg'
 import CourseForm from './components/CourseForm'
 import ScheduleView from './components/ScheduleView'
 import { Schedule, Course, CourseColor, TimeRange } from './domain'
@@ -117,10 +119,16 @@ function App() {
 
   async function handleShare() {
     if (courses.length === 0) return
+
+    const copyAndShow = async (url: string) => {
+      await navigator.clipboard.writeText(url).catch(() => {})
+      setShareState({ status: 'done', url })
+      setTimeout(() => setShareState({ status: 'idle' }), 2500)
+    }
+
     // Reuse existing share ID if the schedule hasn't been modified
     if (currentShareId) {
-      const url = `${window.location.origin}?s=${currentShareId}`
-      setShareState({ status: 'done', url })
+      await copyAndShow(`${window.location.origin}?s=${currentShareId}`)
       return
     }
     setShareState({ status: 'loading' })
@@ -133,8 +141,7 @@ function App() {
       const data: { id?: string; error?: string } = await res.json()
       if (!res.ok || !data.id) throw new Error(data.error ?? 'Unknown error')
       saveShareId(data.id)
-      const url = `${window.location.origin}?s=${data.id}`
-      setShareState({ status: 'done', url })
+      await copyAndShow(`${window.location.origin}?s=${data.id}`)
     } catch {
       setShareState({ status: 'error' })
     }
@@ -200,6 +207,13 @@ function App() {
         <div className="app-brand">
           <img src={logo} className="app-brand__icon" alt="ClassGrid logo" />
           <span className="app-brand__name">ClassGrid</span>
+          <button
+            className="app-brand__dark"
+            onClick={() => setDarkMode((d) => !d)}
+            aria-label="Toggle dark mode"
+          >
+            <img src={darkMode ? iconSun : iconMoon} alt="" width="16" height="16" />
+          </button>
           <button
             className="app-brand__lang"
             onClick={toggleLang}

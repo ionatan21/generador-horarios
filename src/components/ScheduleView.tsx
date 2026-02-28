@@ -66,20 +66,11 @@ export default function ScheduleView({
   const { t, i18n } = useTranslation();
   const gridRef = useRef<HTMLDivElement>(null);
   const [pendingClear, setPendingClear] = useState(false);
-  const [copied, setCopied] = useState(false);
 
   function toggleLang() {
     const next = i18n.language === "es" ? "en" : "es";
     i18n.changeLanguage(next);
     localStorage.setItem("lang", next);
-  }
-
-  function handleCopy() {
-    if (!shareState.url) return;
-    navigator.clipboard.writeText(shareState.url).then(() => {
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    });
   }
   const [pendingRemoval, setPendingRemoval] = useState<PendingRemoval | null>(
     null,
@@ -301,7 +292,7 @@ export default function ScheduleView({
           <div className="sv-toolbar__sep" />
 
           <button
-            className={`sv-btn${darkMode ? " sv-btn--active" : ""}`}
+            className={`sv-btn sv-btn--dark${darkMode ? " sv-btn--active" : ""}`}
             onClick={onToggleDark}
             title={t("scheduleView.darkModeTitle")}
           >
@@ -489,41 +480,17 @@ export default function ScheduleView({
       )}
 
       {(shareState.status === "done" || shareState.status === "error") && (
-        <div className="sv-modal-overlay" onClick={onShareClose}>
-          <div className="sv-modal sv-modal--share" onClick={(e) => e.stopPropagation()}>
-            {shareState.status === "error" ? (
-              <p className="sv-modal__message sv-modal__message--error">
-                {t("scheduleView.shareError")}
-              </p>
-            ) : (
-              <>
-                <p className="sv-modal__message">{t("scheduleView.shareDone")}</p>
-                <div className="sv-share-url">
-                  <input
-                    className="sv-share-url__input"
-                    type="text"
-                    readOnly
-                    value={shareState.url}
-                    onFocus={(e) => e.currentTarget.select()}
-                  />
-                  <button
-                    className={`sv-modal__btn sv-modal__btn--confirm${copied ? " sv-modal__btn--copied" : ""}`}
-                    onClick={handleCopy}
-                  >
-                    {copied ? t("scheduleView.shareCopied") : t("scheduleView.shareCopy")}
-                  </button>
-                </div>
-              </>
-            )}
-            <div className="sv-modal__actions">
-              <button
-                className="sv-modal__btn sv-modal__btn--cancel"
-                onClick={onShareClose}
-              >
-                {t("scheduleView.shareClose")}
-              </button>
-            </div>
-          </div>
+        <div className={`sv-toast sv-toast--${shareState.status}`}>
+          <span>
+            {shareState.status === "done"
+              ? t("scheduleView.shareDone")
+              : t("scheduleView.shareError")}
+          </span>
+          {shareState.status === "error" && (
+            <button className="sv-toast__close" onClick={onShareClose} aria-label="Cerrar">
+              ✕
+            </button>
+          )}
         </div>
       )}
 

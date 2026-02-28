@@ -89,7 +89,6 @@
 /* ── Brand lang button (mobile only) ────────────────── */
 .app-brand__lang {
   display: none;
-  margin-left: auto;
   background: none;
   border: 1.5px solid rgba(255,255,255,0.35);
   border-radius: 0.4rem;
@@ -108,6 +107,32 @@
 }
 
 .app-brand__lang:hover {
+  background: rgba(255,255,255,0.15);
+}
+
+/* ── Brand dark-mode button (mobile only) ────────────── */
+.app-brand__dark {
+  display: none;
+  margin-left: auto;
+  background: none;
+  border: 1.5px solid rgba(255,255,255,0.35);
+  border-radius: 0.4rem;
+  width: 2rem;
+  height: 2rem;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background 0.15s;
+  padding: 0;
+}
+
+.app-brand__dark img {
+  filter: brightness(0) invert(1);
+  display: block;
+}
+
+.app-brand__dark:hover {
   background: rgba(255,255,255,0.15);
 }
 
@@ -131,6 +156,10 @@
   }
 
   .app-brand__lang {
+    display: flex;
+  }
+
+  .app-brand__dark {
     display: flex;
   }
 
@@ -171,6 +200,10 @@
 }
 
 .dark .app-brand__lang {
+  border-color: rgba(255,255,255,0.25);
+}
+
+.dark .app-brand__dark {
   border-color: rgba(255,255,255,0.25);
 }
 

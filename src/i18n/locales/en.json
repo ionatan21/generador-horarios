@@ -41,7 +41,7 @@
     "shareLabel": "Share",
     "shareLoading": "Generating link…",
     "shareError": "Could not generate link. Try again.",
-    "shareDone": "Your schedule link:",
+    "shareDone": "Link copied to clipboard!",
     "shareCopy": "Copy",
     "shareCopied": "Copied!",
     "shareClose": "Close",
