@@ -182,7 +182,51 @@ function App() {
 
   function handleAddCourse(course: Course) {
     clearShareId()
-    setCourses((prev) => [...prev, course])
+    setCourses((prev) => {
+      // Returns true when two HH:MM times are "slot-contiguous":
+      // slots run HH:00–HH:50 so the next slot starts at (HH+1):00 (10-min break).
+      function slotContiguous(earlier: string, later: string): boolean {
+        const [eh, em] = earlier.split(':').map(Number)
+        const [lh, lm] = later.split(':').map(Number)
+        // Direct adjacency (e.g. 08:50 → 09:00)
+        if (em === 50 && lm === 0 && lh === eh + 1) return true
+        // Also allow exact same boundary (e.g. 08:00 → 08:00 edge case guard)
+        return earlier === later
+      }
+
+      // Find an existing course that is an exact duplicate AND contiguous in time
+      const mergeIdx = prev.findIndex((existing) => {
+        if (existing.name !== course.name) return false
+        if (existing.color.hex !== course.color.hex) return false
+        if (existing.days.length !== course.days.length) return false
+        const aSorted = [...existing.days].sort()
+        const bSorted = [...course.days].sort()
+        if (!aSorted.every((d, i) => d === bSorted[i])) return false
+        // Contiguous: one ends exactly where (slot-wise) the other begins
+        return (
+          slotContiguous(existing.timeRange.end, course.timeRange.start) ||
+          slotContiguous(course.timeRange.end, existing.timeRange.start)
+        )
+      })
+
+      if (mergeIdx === -1) return [...prev, course]
+
+      const existing = prev[mergeIdx]
+      const mergedStart =
+        existing.timeRange.start < course.timeRange.start
+          ? existing.timeRange.start
+          : course.timeRange.start
+      const mergedEnd =
+        existing.timeRange.end > course.timeRange.end
+          ? existing.timeRange.end
+          : course.timeRange.end
+
+      const merged = existing.with({
+        timeRange: new TimeRange(mergedStart, mergedEnd),
+      })
+
+      return prev.map((c, i) => (i === mergeIdx ? merged : c))
+    })
     if (window.innerWidth <= 768) {
       setSidebarOpen(false)
       setTimeout(() => {
