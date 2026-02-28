@@ -392,14 +392,30 @@ export default function ScheduleView({
                   }}
                   onClick={() => { if (!isSharedView) setPendingRemoval({ course, day }) }}
                 >
-                  <span className="sv-course-name">{course.name}</span>
+                  <span
+                    className="sv-course-name"
+                    style={
+                      rowSpan > 1
+                        ? {
+                            whiteSpace: "normal",
+                            display: "-webkit-box",
+                            WebkitBoxOrient: "vertical",
+                            WebkitLineClamp: rowSpan,
+                            overflow: "hidden",
+                            textOverflow: "unset",
+                          }
+                        : undefined
+                    }
+                  >
+                    {course.name}
+                  </span>
                   <div className="sv-tooltip">
                     <strong>{course.name}</strong>
                     <span>
                       {course.timeRange.start} &ndash; {course.timeRange.end}
                     </span>
                     <span className="sv-tooltip-days">
-                      {course.days.map((d) => t(`dayAbbr.${d}`)).join(" ")}
+                      {course.days.map((d) => t(`days.${d}`)).join(", ")}
                     </span>
                   </div>
                 </div>

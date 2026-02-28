@@ -8,14 +8,56 @@
 
 /* ── Left sidebar ────────────────────────────────────── */
 .app-sidebar {
+  width: 335px;
   flex-shrink: 0;
   background: #fff;
   border-right: 1px solid #e2e8f0;
   padding: 0 0 1.5rem;
   overflow-y: auto;
+  overflow-x: hidden;
   box-shadow: 2px 0 8px rgba(0, 0, 0, 0.04);
   display: flex;
   flex-direction: column;
+  transition: width 0.3s ease;
+}
+
+/* ── Collapsed sidebar (desktop only) ────────────────── */
+.app-sidebar--collapsed {
+  width: 90px;
+}
+
+.app-sidebar--collapsed .app-sidebar__body {
+  visibility: hidden;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.15s ease, visibility 0.15s ease;
+}
+
+.app-sidebar--collapsed .app-brand__name {
+  opacity: 0;
+  width: 0;
+  overflow: hidden;
+  pointer-events: none;
+  transition: opacity 0.15s ease, width 0.3s ease;
+}
+
+.app-sidebar--collapsed .app-brand__dark,
+.app-sidebar--collapsed .app-brand__lang {
+  opacity: 0;
+  width: 0;
+  overflow: hidden;
+  pointer-events: none;
+  padding: 0;
+  border: none;
+}
+
+.app-sidebar--collapsed .app-brand {
+  padding: 1.1rem 0;
+  justify-content: center;
+}
+
+.app-sidebar--collapsed .app-brand__collapse {
+  margin-left: 0;
 }
 
 /* ── Brand header ──────────────────────────────────────────────────────────── */
@@ -62,6 +104,28 @@
   display: flex;
   flex-direction: column;
   overflow-y: auto;
+}
+
+/* ── Desktop collapse button ─────────────────────────── */
+.app-brand__collapse {
+  display: flex;
+  margin-left: auto;
+  background: none;
+  border: 1.5px solid rgba(255,255,255,0.35);
+  border-radius: 0.4rem;
+  color: #fff;
+  width: 2rem;
+  height: 2rem;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background 0.15s;
+  padding: 0;
+}
+
+.app-brand__collapse:hover {
+  background: rgba(255,255,255,0.15);
 }
 
 /* ── Brand toggle (mobile only) ─────────────────────── */
@@ -145,10 +209,40 @@
   }
 
   .app-sidebar {
-    width: 100%;
+    width: 100% !important;
     border-right: none;
     border-bottom: 1px solid #e2e8f0;
     overflow: visible;
+    transition: none;
+  }
+
+  /* Collapse state has no effect on mobile */
+  .app-sidebar--collapsed .app-sidebar__body {
+    visibility: visible;
+    pointer-events: auto;
+    opacity: 1;
+  }
+
+  .app-sidebar--collapsed .app-brand__name {
+    opacity: 1;
+    width: auto;
+    pointer-events: auto;
+  }
+
+  .app-sidebar--collapsed .app-brand__dark,
+  .app-sidebar--collapsed .app-brand__lang {
+    opacity: 1;
+    width: 2rem;
+    pointer-events: auto;
+  }
+
+  .app-sidebar--collapsed .app-brand {
+    padding: 1.1rem 1.25rem;
+    justify-content: flex-start;
+  }
+
+  .app-brand__collapse {
+    display: none;
   }
 
   .app-brand__toggle {
@@ -207,6 +301,10 @@
   border-color: rgba(255,255,255,0.25);
 }
 
+.dark .app-brand__collapse {
+  border-color: rgba(255,255,255,0.25);
+}
+
 .dark .app-sidebar__body {
   background: #1e1e1e;
 }
@@ -259,6 +357,10 @@
   border-color: #c0c0c0;
 }
 
+.dark .sv-day-abbr {
+  color: #ffffff;
+}
+
 .dark .sv-corner {
   background: #1e1e1e;
   border-color: #c0c0c0;
@@ -266,7 +368,7 @@
 
 .dark .sv-time-label {
   background: #1e1e1e;
-  color: #64748b;
+  color: #b6c0cf;
   border-color: #c0c0c0;
 }
 
@@ -275,11 +377,11 @@
 }
 
 .dark .sv-time-label__end {
-  color: #64748b;
+  color: #b6c0cf;
 }
 
 .dark .sv-bg-cell {
-  border-color: #ffffff;
+  border-color: #dddddd;
   background: #000000;
 }
 

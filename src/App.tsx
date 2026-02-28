@@ -68,7 +68,14 @@ function App() {
     () => localStorage.getItem('darkMode') === 'true',
   )
   const [sidebarOpen, setSidebarOpen] = useState(false)
+  const [sidebarCollapsed, setSidebarCollapsed] = useState<boolean>(
+    () => localStorage.getItem('sidebarCollapsed') === 'true',
+  )
   const mainRef = useRef<HTMLElement>(null)
+
+  useEffect(() => {
+    localStorage.setItem('sidebarCollapsed', String(sidebarCollapsed))
+  }, [sidebarCollapsed])
 
   /** When the URL has ?s=<id>, load that shared schedule once on mount. */
   const [isSharedView, setIsSharedView] = useState(false)
@@ -203,7 +210,7 @@ function App() {
 
   return (
     <div className={`app-layout${darkMode ? ' dark' : ''}`}>
-      <aside className={`app-sidebar${sidebarOpen ? ' app-sidebar--open' : ''}`}>
+      <aside className={`app-sidebar${sidebarOpen ? ' app-sidebar--open' : ''}${sidebarCollapsed ? ' app-sidebar--collapsed' : ''}`}>
         <div className="app-brand">
           <img src={logo} className="app-brand__icon" alt="ClassGrid logo" />
           <span className="app-brand__name">ClassGrid</span>
@@ -220,6 +227,16 @@ function App() {
             aria-label="Toggle language"
           >
             {i18n.language === 'es' ? 'EN' : 'ES'}
+          </button>
+          <button
+            className="app-brand__collapse"
+            onClick={() => setSidebarCollapsed((c) => !c)}
+            aria-label={sidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+            title={sidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+          >
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" style={{ width: '0.85rem', height: '0.85rem', transition: 'transform 0.3s ease', transform: sidebarCollapsed ? 'rotate(180deg)' : 'none' }}>
+              <polyline points="10,3 5,8 10,13" />
+            </svg>
           </button>
           <button
             className="app-brand__toggle"
