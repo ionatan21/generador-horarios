@@ -103,16 +103,22 @@ function App() {
 
     setIsSharedView(true)
     fetch(`/api/getSchedule?id=${encodeURIComponent(shareId)}`)
-      .then((r) => r.json())
+      .then((r) => {
+        if (!r.ok) throw new Error(`HTTP ${r.status}`)
+        return r.json()
+      })
       .then((data: { schedule?: SerializedCourse[] }) => {
-        if (Array.isArray(data.schedule)) {
-          // Load into volatile state — user's own localStorage is untouched
-          setSharedCourses(deserializeCourses(data.schedule))
-          saveShareId(shareId)
-        }
+        if (!Array.isArray(data.schedule)) throw new Error('invalid data')
+        // Load into volatile state — user's own localStorage is untouched
+        setSharedCourses(deserializeCourses(data.schedule))
+        saveShareId(shareId)
       })
       .catch(() => {
-        // silently ignore; user keeps their existing courses
+        // Schedule not found or ID invalid — fall back to local mode
+        setIsSharedView(false)
+        window.history.replaceState({}, '', window.location.pathname)
+        setNotFoundToast(true)
+        setTimeout(() => setNotFoundToast(false), 4000)
       })
   }, [])
 
@@ -123,6 +129,7 @@ function App() {
   // ── Share ──────────────────────────────────────────────────────────────────
 
   const [shareState, setShareState] = useState<ShareState>({ status: 'idle' })
+  const [notFoundToast, setNotFoundToast] = useState(false)
 
   async function handleShare() {
     if (courses.length === 0) return
@@ -307,6 +314,8 @@ function App() {
           onShareClose={handleShareClose}
           isSharedView={isSharedView}
           onDismissSharedView={handleDismissSharedView}
+          notFoundToast={notFoundToast}
+          onNotFoundToastClose={() => setNotFoundToast(false)}
         />
       </main>
     </div>

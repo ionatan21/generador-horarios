@@ -50,6 +50,8 @@ interface Props {
   onShareClose: () => void;
   isSharedView: boolean;
   onDismissSharedView: () => void;
+  notFoundToast: boolean;
+  onNotFoundToastClose: () => void;
 }
 
 export default function ScheduleView({
@@ -63,6 +65,8 @@ export default function ScheduleView({
   onShareClose,
   isSharedView,
   onDismissSharedView,
+  notFoundToast,
+  onNotFoundToastClose,
 }: Props) {
   const { t, i18n } = useTranslation();
   const gridRef = useRef<HTMLDivElement>(null);
@@ -510,6 +514,15 @@ export default function ScheduleView({
               </button>
             </div>
           </div>
+        </div>
+      )}
+
+      {notFoundToast && (
+        <div className="sv-toast sv-toast--error">
+          <span>{t("scheduleView.scheduleNotFound")}</span>
+          <button className="sv-toast__close" onClick={onNotFoundToastClose} aria-label="Cerrar">
+            ✕
+          </button>
         </div>
       )}
 

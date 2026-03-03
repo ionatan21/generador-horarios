@@ -46,7 +46,8 @@
     "shareCopied": "¡Copiado!",
     "shareClose": "Cerrar",
     "shareReadOnly": "Horario compartido (solo lectura)",
-    "shareReadOnlyDismiss": "Hacer mío"
+    "shareReadOnlyDismiss": "Hacer mío",
+    "scheduleNotFound": "No se encontró el horario solicitado."
   },
   "days": {
     "L": "Lunes",

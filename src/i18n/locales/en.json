@@ -46,7 +46,8 @@
     "shareCopied": "Copied!",
     "shareClose": "Close",
     "shareReadOnly": "Shared schedule (read-only)",
-    "shareReadOnlyDismiss": "Make it mine"
+    "shareReadOnlyDismiss": "Make it mine",
+    "scheduleNotFound": "The requested schedule was not found."
   },
   "days": {
     "L": "Monday",

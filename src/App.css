@@ -4,6 +4,7 @@
   height: 100vh;
   background: #f1f5f9;
   overflow: hidden;
+ 
 }
 
 /* ── Left sidebar ────────────────────────────────────── */
@@ -270,11 +271,6 @@
   .app-main {
     padding: 0.75rem;
   }
-}
-
-/* ── Dark mode ───────────────────────────────────────── */
-.dark.app-layout {
-  
 }
 
 
