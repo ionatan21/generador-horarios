@@ -9,6 +9,7 @@
       "src": "/api/getSchedule",
       "dest": "/api/getSchedule.ts"
     },
+    { "handle": "filesystem" },
     {
       "src": "/(.*)",
       "dest": "/index.html"
