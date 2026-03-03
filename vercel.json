@@ -8,6 +8,10 @@
     {
       "src": "/api/getSchedule",
       "dest": "/api/getSchedule.ts"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/index.html"
     }
   ]
 }

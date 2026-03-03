@@ -70,5 +70,12 @@
   "lang": {
     "es": "Español",
     "en": "English"
+  },
+  "notFound": {
+    "title": "Page not found",
+    "message": "The page you visited does not exist. We will redirect you to the home page automatically.",
+    "countdown": "Redirecting in {{count}} second...",
+    "countdown_other": "Redirecting in {{count}} seconds...",
+    "goNow": "Go home now"
   }
 }

@@ -70,5 +70,12 @@
   "lang": {
     "es": "Español",
     "en": "English"
+  },
+  "notFound": {
+    "title": "Página no encontrada",
+    "message": "La ruta que visitaste no existe. Te redirigiremos al inicio automáticamente.",
+    "countdown": "Redirigiendo en {{count}} segundo...",
+    "countdown_other": "Redirigiendo en {{count}} segundos...",
+    "goNow": "Ir al inicio ahora"
   }
 }
